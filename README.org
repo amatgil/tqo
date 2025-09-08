@@ -52,9 +52,13 @@ Bar ← {α ⍝ Code goes here ⍝}
 : [width←512 height←512 color←_ , F] » Baz  ⍝ Baz takes a rank 3 array that represents a 512x512 
 Baz ← {α ⍝ Code goes here ⍝}                ⍝ image (the dimension of the color axis is left unspecified) composed of
                                             ⍝ floats
-#+end_example
 
-Unsolved issues: how to annotate destructure/pattern match? e.g- =(l r) ← ...=
+: 4,N » Quz « 2,N                           ⍝ Quz is a dyadic function that takes a rank-4 and a rank-2 array, both of naturals
+Quz ← {α ⍝ Code goes here ⍝}
+                                            
+#+end_example
+*** Unsolved issues
+How to annotate destructure/pattern match? e.g- =(l r) ← ...=
 
 ** Other notes
 NO STRANDING, raw underscores (no loopy lines)
@@ -64,4 +68,4 @@ It could work really well as a repl: make an alias that runs =tqo "--load shell_
 
 
 
-[fn:1]  I need to understand bqn's better to be able to decide properly, but so far the nested one (I'm conceptualizing it as fix=box) seem super nice together with Rank
+[fn:1]  I need to understand bqn's better to be able to decide properly, but so far the nested one (I'm conceptualizing it as fix=box) seem nice
