@@ -1,0 +1,67 @@
+* TQO
+A LTR, strongly typed apl
+
+** UX (in emacs, mainly)
+The repl is to take take input, both from normal typing and from "behind". The idea is that you can `)ed Foo` and it'll open up another buffer that has `Foo<-{}`. Any time you save that buffer, the _repl's definition of Foo_ also changes for phenomenal debugging.  A way to save like that would be a `)save_background Foo {}` that doesn't get shown in the buffer. Unanswered question: would there be an ergonomic way to push it to a file?
+
+Holy piss, what if: shell apl
+
+** Brainstorm
+*** Namespaces
+literally dyalog, quad NS
+*** Fixed arity, mostly
+Some glyphs (like =-= subtract and =⍟= log) can definitely be ambivalent or whatever it's called (default argument ones are good candidates). However, tally being the same as notmatch sucks for Notation as a Tool of Thought :/
+*** Arguments' names
+Instead of just alpha and omega (and their underscores for modifiers), there will be two more glyphs:
+**** if you're in a bare dfn
+(I.e. you're not inside _another_ dfn) alpha and omega are the usual left and right arguments, respectively. 
+**** If you're in a nested dfn
+Alpha and omega _still refer to the bare values_ of the outermost dfn, and the nested arguments get two different glyphs (tbd, probably beta and psi)
+
+** Array model
+Based? Maybe?  [fn:1]
+
+** Type annotations
+They must always exist. If they cannot be inferred, it errors out.
+
+Type annotations must take the form of (written in Rust-ish pseudocode)
+#+begin_src rust
+  struct TypeAnnotation {
+      scalar_type: ScalarType,                    // The type
+      shape: ShapeDescription,                    // And the shape
+  }
+
+  enum ShapeDescription {      
+      Rank(usize),                                // We know the number of axis
+      Axes(Vec<(Option<String>, Option<usize>)>), // We may know the size or name of each axis. Implies rank
+  }
+#+end_src
+
+Annotations must go directly above the function definition:
+(the separator (currently the =,=) between the rank/shape and the scalar type is very TBD)
+#+begin_example
+: 4 » Foo                                   ⍝ Foo takes a rank 4 array of unspecified type
+Foo ← {α ⍝ Code goes here ⍝}
+
+: 4,N » Foo                                 ⍝ Foo takes a rank 4 array of naturals 
+Foo ← {α ⍝ Code goes here ⍝}
+
+: [3 _ , N] » Bar                           ⍝ Bar takes a rank 2 array whose leading dimension has size 3, of naturals
+Bar ← {α ⍝ Code goes here ⍝}
+
+: [width←512 height←512 color←_ , F] » Baz  ⍝ Baz takes a rank 3 array that represents a 512x512 
+Baz ← {α ⍝ Code goes here ⍝}                ⍝ image (the dimension of the color axis is left unspecified) composed of
+                                            ⍝ floats
+#+end_example
+
+Unsolved issues: how to annotate destructure/pattern match? e.g- =(l r) ← ...=
+
+** Other notes
+NO STRANDING, raw underscores (no loopy lines)
+
+It could work really well as a repl: make an alias that runs =tqo "--load shell_prelude"= with stuff like =ls= n shit :))
+
+
+
+
+[fn:1]  I need to understand bqn's better to be able to decide properly, but so far the nested one (I'm conceptualizing it as fix=box) seem super nice together with Rank
