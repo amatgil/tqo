@@ -1,22 +1,35 @@
 * TQO
 A LTR, strongly typed apl
 
-** UX (in emacs, mainly)
-The repl is to take take input, both from normal typing and from "behind". The idea is that you can `)ed Foo` and it'll open up another buffer that has `Foo<-{}`. Any time you save that buffer, the _repl's definition of Foo_ also changes for phenomenal debugging.  A way to save like that would be a `)save_background Foo {}` that doesn't get shown in the buffer. Unanswered question: would there be an ergonomic way to push it to a file?
+(this file is best viewed with an APL font, such as [[https://dyalog.github.io/APL387/][APL387]])
 
-Holy piss, what if: shell apl
+** UX (in emacs, mainly)
+The repl is to take take input, both from normal typing and from "behind". The idea is that you can =)ed Foo= and it'll open up another buffer that has =Foo<-{}=. Any time you save that buffer, the _repl's definition of Foo_ also changes for phenomenal debugging.  A way to save like that would be a =)save_background Foo {}= that doesn't get shown in the buffer. Unanswered question: would there be an ergonomic way to push it to a file?
+
+I expect to make a full, usable shell with it:
+
+#+begin_src 
+  ls                                 ⍝ Would output a list of directories
+  cd "foo" 
+  read "file.txt" (⊣⊆≠)'\n' ⋕⍤¯1 /+  ⍝ Add up all the numbers in file.txt
+#+end_src
 
 ** Brainstorm
+*** Left To Right
+This mainly manifests in the convention for functions becoming: input on the left, data on the right.
 *** Namespaces
 literally dyalog, quad NS
 *** Fixed arity, mostly
-Some glyphs (like =-= subtract and =⍟= log) can definitely be ambivalent or whatever it's called (default argument ones are good candidates). However, tally being the same as notmatch sucks for Notation as a Tool of Thought :/
+Some glyphs (like =-= subtract and =⍟= log) can definitely be (default argument ones are good candidates). However, tally being the same as notmatch sucks for Notation as a Tool of Thought :/
 *** Arguments' names
 Instead of just alpha and omega (and their underscores for modifiers), there will be two more glyphs:
 **** if you're in a bare dfn
 (I.e. you're not inside _another_ dfn) alpha and omega are the usual left and right arguments, respectively. 
 **** If you're in a nested dfn
 Alpha and omega _still refer to the bare values_ of the outermost dfn, and the nested arguments get two different glyphs (tbd, probably beta and psi)
+
+*** Monadic functions' arguments doesn't have to be on the left
+A monadic function may take a singular omega (and thus have type =: Example « 2,N=). That is, a function may be defined to only take a right argument
 
 ** Array model
 Based? Maybe?  [fn:1]
@@ -65,6 +78,9 @@ NO STRANDING, raw underscores (no loopy lines)
 
 It could work really well as a repl: make an alias that runs =tqo "--load shell_prelude"= with stuff like =ls= n shit :))
 
+All non-commutative functions must have non-symmetrical glyphs. 
+
+Single quotes for single chars, double quotes for strings (i.e. lists of chars)
 
 
 
