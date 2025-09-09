@@ -53,21 +53,26 @@ Type annotations must take the form of (written in Rust-ish pseudocode)
 Annotations must go directly above the function definition:
 (the separator (currently the =,=) between the rank/shape and the scalar type is very TBD)
 #+begin_example
-: 4 » Foo                                   ⍝ Foo takes a rank 4 array of unspecified type
-Foo ← {α ⍝ Code goes here ⍝}
+: (4) » foo                                 ⍝ foo takes a rank 4 array of unspecified type
+foo ← {α ⍝ Code goes here ⍝}
 
-: 4,N » Foo                                 ⍝ Foo takes a rank 4 array of naturals 
-Foo ← {α ⍝ Code goes here ⍝}
+: (4,N) » foo                               ⍝ foo takes a rank 4 array of naturals 
+foo ← {α ⍝ Code goes here ⍝}
 
-: [3 _ , N] » Bar                           ⍝ Bar takes a rank 2 array whose leading dimension has size 3, of naturals
-Bar ← {α ⍝ Code goes here ⍝}
+: [3 _ , N] » bar                           ⍝ bar takes a rank 2 array whose leading dimension has size 3, of naturals
+bar ← {α ⍝ Code goes here ⍝}
 
-: [width←512 height←512 color←_ , F] » Baz  ⍝ Baz takes a rank 3 array that represents a 512x512 
-Baz ← {α ⍝ Code goes here ⍝}                ⍝ image (the dimension of the color axis is left unspecified) composed of
+: [width←512 height←512 color←_ , F] » baz  ⍝ baz takes a rank 3 array that represents a 512x512 
+baz ← {α ⍝ Code goes here ⍝}                ⍝ image (the dimension of the color axis is left unspecified) composed of
                                             ⍝ floats
 
-: 4,N » Quz « 2,N                           ⍝ Quz is a dyadic function that takes a rank-4 and a rank-2 array, both of naturals
-Quz ← {α ⍝ Code goes here ⍝}
+: (4,N) » quz « (2,N)                       ⍝ quz is a dyadic function that takes a rank-4 and a rank-2 array, both of naturals
+quz ← {α ⍝ Code goes here ⍝}
+
+
+: (1,N) » waldo « (2,N)                     ⍝ waldo is a dyadic function that takes rank-1 and rank-2 arrays of nats and outputs a rank-3 array of nats
+           ↳ (3,N)
+waldo ← {α ⍝ Code goes here ⍝}
                                             
 #+end_example
 *** Unsolved issues
