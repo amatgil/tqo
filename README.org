@@ -82,6 +82,8 @@ All non-commutative functions must have non-symmetrical glyphs.
 
 Single quotes for single chars, double quotes for strings (i.e. lists of chars)
 
+Inversionian lang go brr
+
 
 
 [fn:1]  I need to understand bqn's better to be able to decide properly, but so far the nested one (I'm conceptualizing it as fix=box) seem nice
