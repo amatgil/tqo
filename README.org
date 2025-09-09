@@ -76,7 +76,7 @@ How to annotate destructure/pattern match? e.g- =(l r) ← ...=
 ** Other notes
 NO STRANDING, raw underscores (no loopy lines)
 
-It could work really well as a repl: make an alias that runs =tqo "--load shell_prelude"= with stuff like =ls= n shit :))
+It could work really well as a repl: make an alias that runs =tqo "--load shell_prelude"= with stuff like =ls= and such:))
 
 All non-commutative functions must have non-symmetrical glyphs. 
 
