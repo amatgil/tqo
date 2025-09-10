@@ -32,7 +32,7 @@ Every function must have a static type, which consists of either rank or the dim
 The repl is to take take input, both from normal typing and from "behind". The idea is that you can =)ed Foo= and it'll open up another buffer that has =Foo<-{}=. Any time you save that buffer, the _repl's definition of Foo_ also changes for phenomenal debugging.  A way to save like that would be a =)save_background Foo {}= that doesn't get shown in the buffer. Unanswered question: would there be an ergonomic way to push it to a file?
 
 *** Extra
-Chord to open emacs buffer with list of greek letters (like =unicode-chars-list-chars=)
+Chord to open emacs buffer with list of greek letters (like =unicode-chars-list-chars=), as well as all primitives with their unicode name and their tqo name.
 
 ** Others
 I expect to make a full, usable shell with it and replace zsh with it (à la nushell) [fn:2]
