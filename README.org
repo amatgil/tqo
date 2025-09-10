@@ -3,34 +3,48 @@ A LTR, strongly typed apl
 
 (this file is best viewed with an APL font, such as [[https://dyalog.github.io/APL387/][APL387]])
 
-** UX (in emacs, mainly)
+** Key features
+*** Array model
+Based.
+
+On top of arrays, we have haskell-esque =data= ADTs: one may define enummerations 
+
+*** Left To Right
+This mainly manifests in the convention for functions becoming: input on the left, data on the right.
+*** Fixed arity, mostly
+Some glyphs (like =⍟= log) may be ambivalent (default argument ones are good candidates). However, examples tally being the same as notmatch sucks for Notation as a Tool of Thought :/
+*** Monadic functions' arguments doesn't have to always be on the left
+A monadic function may take a singular omega (and thus have type =: Example « 2,N=). That is, a function may be defined to only take a right argument (for example, negation).
+*** Naming things: considered good
+In a definition, each name may only refer to one thing (this avoids confusion with regard to "what does omega refer to in this scope?")
+
+To achieve this, instead of just alpha and omega (and their underscores for modifiers), more glyphs of the greek alphabet: each level of dfn nesting will add two more greek letters (from either side of the alphabet), such that alpha and omega always refer to the outermost arguments, beta and psi refer to the next level of nesting's arguments, etc.
+
+*** Strongly typed
+Every function must have a static type, which consists of either rank or the dimensions of the axes, as well as the underlying scalar type.
+
+** Repl, tooling (mostly focused for use in emacs)
+(Still unimplemented)
+
 The repl is to take take input, both from normal typing and from "behind". The idea is that you can =)ed Foo= and it'll open up another buffer that has =Foo<-{}=. Any time you save that buffer, the _repl's definition of Foo_ also changes for phenomenal debugging.  A way to save like that would be a =)save_background Foo {}= that doesn't get shown in the buffer. Unanswered question: would there be an ergonomic way to push it to a file?
 
-I expect to make a full, usable shell with it:
+*** Extra
+Chord to open emacs buffer with list of greek letters
+
+** Others
+I expect to make a full, usable shell with it and replace zsh with it (à la nushell) [fn:2]
+ 
+
 
 #+begin_src 
-  ls                                 ⍝ Would output a list of directories
+  ls                                 ⍝ Would output a list of files
   cd "foo" 
   read "file.txt" (⊣⊆≠)'\n' ⋕⍤¯1 /+  ⍝ Add up all the numbers in file.txt
 #+end_src
 
 ** Brainstorm
-*** Left To Right
-This mainly manifests in the convention for functions becoming: input on the left, data on the right.
 *** Namespaces
 literally dyalog, quad NS
-*** Fixed arity, mostly
-Some glyphs (like =-= subtract and =⍟= log) can definitely be (default argument ones are good candidates). However, tally being the same as notmatch sucks for Notation as a Tool of Thought :/
-*** Arguments' names
-Instead of just alpha and omega (and their underscores for modifiers), there will be two more glyphs:
-**** if you're in a bare dfn
-(I.e. you're not inside _another_ dfn) alpha and omega are the usual left and right arguments, respectively. 
-**** If you're in a nested dfn
-Alpha and omega _still refer to the bare values_ of the outermost dfn, and the nested arguments get two different glyphs (tbd, probably beta and psi)
-
-*** Monadic functions' arguments doesn't have to be on the left
-A monadic function may take a singular omega (and thus have type =: Example « 2,N=). That is, a function may be defined to only take a right argument
-
 ** Array model
 Based? Maybe?  [fn:1]
 
@@ -53,35 +67,59 @@ Type annotations must take the form of (written in Rust-ish pseudocode)
 Annotations must go directly above the function definition:
 (the separator (currently the =,=) between the rank/shape and the scalar type is very TBD)
 #+begin_example
-: (4) » foo                                 ⍝ foo takes a rank 4 array of unspecified type
+: '(4) » foo                                 ⍝ foo takes a rank 4 array of unspecified type
 foo ← {α ⍝ Code goes here ⍝}
 
-: (4,N) » foo                               ⍝ foo takes a rank 4 array of naturals 
+: '(4,N) » foo                               ⍝ foo takes a rank 4 array of naturals 
 foo ← {α ⍝ Code goes here ⍝}
 
-: [3 _ , N] » bar                           ⍝ bar takes a rank 2 array whose leading dimension has size 3, of naturals
+: '[3 _ , N] » bar                           ⍝ bar takes a rank 2 array whose leading dimension has size 3, of naturals
 bar ← {α ⍝ Code goes here ⍝}
 
-: [width←512 height←512 color←_ , F] » baz  ⍝ baz takes a rank 3 array that represents a 512x512 
+: '[width←512 height←512 color←_ , F] » baz  ⍝ baz takes a rank 3 array that represents a 512x512 
 baz ← {α ⍝ Code goes here ⍝}                ⍝ image (the dimension of the color axis is left unspecified) composed of
                                             ⍝ floats
 
-: (4,N) » quz « (2,N)                       ⍝ quz is a dyadic function that takes a rank-4 and a rank-2 array, both of naturals
+: '(4,N) » quz «∧ (2,N)                       ⍝ quz is a dyadic function that takes a rank-4 and a rank-2 array, both of naturals
 quz ← {α ⍝ Code goes here ⍝}
 
 
-: (1,N) » waldo « (2,N)                     ⍝ waldo is a dyadic function that takes rank-1 and rank-2 arrays of nats and outputs a rank-3 array of nats
+: '(1,N) » waldo « (2,N)                     ⍝ waldo is a dyadic function that takes rank-1 and rank-2 arrays of nats and outputs a rank-3 array of nats
            ↳ (3,N)
 waldo ← {α ⍝ Code goes here ⍝}
                                             
 #+end_example
+
 *** Unsolved issues
 How to annotate destructure/pattern match? e.g- =(l r) ← ...=
 
-** Other notes
-NO STRANDING, raw underscores (no loopy lines)
+** Type declarations
+=TQO= has full support for haskell-esque data definitions:
+#+begin_src tqo
+  ⍝ Note that this specific example is a tad unidiomatic, as these would be better
+  ⍝ represented as raw naturals. However, it gets across the syntax well
 
-It could work really well as a repl: make an alias that runs =tqo "--load shell_prelude"= with stuff like =ls= and such:))
+  □ Suit    ← ⟨ Club ⋄ Diamond ⋄ Heart ⋄ Spade⟩      ⍝ Standard enumeration
+  □ Value   ← ⟨ Two ⋄ Three ⋄ Four ⋄ Five
+                    ⋄ Six ⋄ Seven ⋄ Eight
+                    ⋄ Nine ⋄ Ten ⋄ Jack
+                    ⋄ Queen ⋄ Kind ⋄ Ace ⟩    
+  □ Card    ← ⟨ value: 'Value ⋄ suit: 'Suit ⟩        ⍝ Product type
+  □ Player  ← ⟨ Host  ← ⟨ name: '(1, char) ⟩         ⍝ Sum type
+                Guest ← ⟨ debt: 'Nat ⋄ hp: 'Float ⟩ ⟩        
+
+#+end_src
+
+These are intended to be used for grouping together state and documenting intention. Do note that the underlying datatypes (i.e. the ones that are properly computed over) should be arrays. For example, prefer using trees through parent/depth representations instead of defining it as an inductive type
+
+Note also that product types are sugar for a sum type with a single unnamed variant. They may be spelt out explicitly:
+
+#+begin_src tqo
+  ⟨ value: 'Value ⋄ suit: 'Suit ⟩ ≡ ⟨ _ ← ⟨ value: 'Value ⋄ suit: 'Suit ⟩ ⟩
+#+end_src
+
+** Other notes
+No implicit stranding, it is done through ascii underscores
 
 All non-commutative functions must have non-symmetrical glyphs. 
 
@@ -89,6 +127,9 @@ Single quotes for single chars, double quotes for strings (i.e. lists of chars)
 
 Inversionian lang go brr
 
+* TODO (design)
+- Decide syntax for doccoments
+- 
 
-
-[fn:1]  I need to understand bqn's better to be able to decide properly, but so far the nested one (I'm conceptualizing it as fix=box) seem nice
+[fn:1] I need to understand bqn's better to be able to decide properly, but so far the nested one (I'm conceptualizing it as fix=box) seem nice
+[fn:2] for example, automatically running =tqo "--load shell_prelude.tqo"= on terminal startup (it would be a bad idea to not have bash or zsh as the true underlying shell, as many programs expect them to run all programs)

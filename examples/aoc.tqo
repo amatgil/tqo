@@ -1,0 +1,20 @@
+
+"D₁" ⎕NS  ⍝ Namespace syntax is tbd
+
+: (1,N) » monotonic ⇒ B
+: (1,N) » slope ⇒ B
+: (1,N) » safe ⇒ B
+: (1,N) » safe′ ⇒ B
+: (2,N) » P₁ ⇒ N
+: (2,N) » P₂ ⇒ N
+
+monotonic ← {β/-⍤±2 ◴⧻=1}
+slope     ← {β/-0⍤⦅3∘≤ ∧ ≥∘1⦆/∧}
+safe      ← ⦅monotonic ∧ slope⦆
+safe′     ← {
+    Mask ← 2*(α⧻⇡)⋯ ∾0 ¬
+    α ⊞{β▽ψ safe}Mask /∨
+}
+
+P₁ ← {α 1⍤safe /+}
+P₂ ← {α 1⍤safe′ /+}
