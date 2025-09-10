@@ -140,10 +140,10 @@ Inversionian lang go brr
 | 'Int            | Arbitrary precision integer                                          |                                                                                                                            |
 | 'Float          | Double precision IEEEE floating point                                |                                                                                                                            |
 | 'Char           | Unicode codepoint                                                    |                                                                                                                            |
-| 'u{₈|₁₆|₃₂|₆₄}  | Unsigned value of {8,16,32,64} bits                                  |                                                                                                                            |
-| 'i{₈|₁₆|₃₂|₆₄}  | Signed value of {8,16,32,64} bits                                    |                                                                                                                            |
-| 'u{₈|₁₆|₃₂|₆₄}I | Unsigned value of {8,16,32,64} bits with infinity                    | The value 0b111.111 is reinterpreted to be infinity; all arithmetic operations are saturating instead of over/underflowing |
-| 'i{₈|₁₆|₃₂|₆₄}I | Signed value of {8,16,32,64} bits with positive and negativeinfinity | See  u{8,16,32,64}I                                                                                                        |
+| 'U{₈|₁₆|₃₂|₆₄}  | Unsigned value of {8,16,32,64} bits                                  |                                                                                                                            |
+| 'I{₈|₁₆|₃₂|₆₄}  | Signed value of {8,16,32,64} bits                                    |                                                                                                                            |
+| 'U{₈|₁₆|₃₂|₆₄}I | Unsigned value of {8,16,32,64} bits with infinity                    | The value 0b111.111 is reinterpreted to be infinity; all arithmetic operations are saturating instead of over/underflowing |
+| 'I{₈|₁₆|₃₂|₆₄}I | Signed value of {8,16,32,64} bits with positive and negativeinfinity | See  u{8,16,32,64}I                                                                                                        |
 
 
 * TODO (design)
