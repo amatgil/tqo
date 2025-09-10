@@ -132,6 +132,18 @@ Single quotes for single chars, double quotes for strings (i.e. lists of chars)
 
 Inversionian lang go brr
 
+*** Built-in Data Types
+| Name            | Description                                                          | Notes                                                                                                                      |
+|-----------------+----------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------|
+| 'Nat            | Arbitrary precision natural                                          | Bools may be Naturals under the hood, TBD                                                                                  |
+| 'Int            | Arbitrary precision integer                                          |                                                                                                                            |
+| 'Float          | Double precision IEEEE floating point                                |                                                                                                                            |
+| 'Char           | Unicode codepoint                                                    |                                                                                                                            |
+| 'u{8,16,32,64}  | Unsigned value of {8,16,32,64} bits                                  |                                                                                                                            |
+| 'i{8,16,32,64}  | Signed value of {8,16,32,64} bits                                    |                                                                                                                            |
+| 'u{8,16,32,64}I | Unsigned value of {8,16,32,64} bits with infinity                    | The value 0b111.111 is reinterpreted to be infinity; all arithmetic operations are saturating instead of over/underflowing |
+| 'i{8,16,32,64}I | Signed value of {8,16,32,64} bits with positive and negativeinfinity | See  u{8,16,32,64}I                                                                                                        |
+
 * TODO (design)
 - Decide syntax for doccoments
 - Document the fact it's leading axis (and that evert exists)
