@@ -29,7 +29,7 @@ Every function must have a static type, which consists of either rank or the dim
 The repl is to take take input, both from normal typing and from "behind". The idea is that you can =)ed Foo= and it'll open up another buffer that has =Foo<-{}=. Any time you save that buffer, the _repl's definition of Foo_ also changes for phenomenal debugging.  A way to save like that would be a =)save_background Foo {}= that doesn't get shown in the buffer. Unanswered question: would there be an ergonomic way to push it to a file?
 
 *** Extra
-Chord to open emacs buffer with list of greek letters
+Chord to open emacs buffer with list of greek letters (like =unicode-chars-list-chars=)
 
 ** Others
 I expect to make a full, usable shell with it and replace zsh with it (à la nushell) [fn:2]
@@ -118,6 +118,11 @@ Note also that product types are sugar for a sum type with a single unnamed vari
   ⟨ value: 'Value ⋄ suit: 'Suit ⟩ ≡ ⟨ _ ← ⟨ value: 'Value ⋄ suit: 'Suit ⟩ ⟩
 #+end_src
 
+A more realistic example of product type usage:
+#+begin_src 
+  □ Graph  ← ⟨ data  ← '(1, T) ⋄ form ← '(1, Nat)  ⟩  ⍝ The generics syntax is TBD
+#+end_src
+
 ** Other notes
 No implicit stranding, it is done through ascii underscores
 
@@ -129,7 +134,11 @@ Inversionian lang go brr
 
 * TODO (design)
 - Decide syntax for doccoments
-- 
+- Document the fact it's leading axis (and that evert exists)
+- Document that trains use moons
+  - Think through another possible syntax for trains
+- Document the fact that uppercase/lowercase have implications for functions/nouns
+- Think hard about how to do generics/typeclasses
 
 [fn:1] I need to understand bqn's better to be able to decide properly, but so far the nested one (I'm conceptualizing it as fix=box) seem nice
 [fn:2] for example, automatically running =tqo "--load shell_prelude.tqo"= on terminal startup (it would be a bad idea to not have bash or zsh as the true underlying shell, as many programs expect them to run all programs)
