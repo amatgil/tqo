@@ -120,7 +120,7 @@ Note also that product types are sugar for a sum type with a single unnamed vari
 
 A more realistic example of product type usage:
 #+begin_src 
-  □ Graph  ← ⟨ data  ← '(1, T) ⋄ form ← '(1, Nat)  ⟩  ⍝ The generics syntax is TBD
+  □ Graph  ← ⟨ data  ← '(1, T) ⋄ form ← '(1, Nat)  ⟩  ⍝ Generics' syntax is TBD
 #+end_src
 
 ** Other notes
