@@ -45,8 +45,6 @@ I expect to make a full, usable shell with it and replace zsh with it (à la nus
 ** Brainstorm
 *** Namespaces
 literally dyalog, quad NS
-** Array model
-Based? Maybe?  [fn:1]
 
 ** Type annotations
 They must always exist. If they cannot be inferred, it errors out.
