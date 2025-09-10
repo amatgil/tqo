@@ -7,7 +7,7 @@ A LTR, strongly typed apl
 *** Array model
 Based.
 
-On top of arrays, we have haskell-esque =data= ADTs: one may define enummerations 
+On top of arrays, we have haskell-esque =data= ADTs: one may define enummerations (see [[*Type declarations][the corresponding section]])
 
 *** Left To Right
 This mainly manifests in the convention for functions becoming: input on the left, data on the right.
@@ -96,6 +96,7 @@ How to annotate destructure/pattern match? e.g- =(l r) ← ...=
 
 ** Type declarations
 =TQO= has full support for haskell-esque data definitions:
+
 #+begin_src tqo
   ⍝ Note that this specific example is a tad unidiomatic, as these would be better
   ⍝ represented as raw naturals. However, it gets across the syntax well
@@ -126,6 +127,8 @@ A more realistic example of product type usage:
 
 ** Other notes
 No implicit stranding, it is done through ascii underscores
+
+In all situations, a diamond is equivalent to a newline
 
 All non-commutative functions must have non-symmetrical glyphs. 
 
