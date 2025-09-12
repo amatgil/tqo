@@ -137,16 +137,90 @@ Single quotes for single chars, double quotes for strings (i.e. lists of chars)
 Inversionian lang go brr
 
 *** Built-in Data Types
-| Name            | Description                                                          | Notes                                                                                                                      |
-|-----------------+----------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------|
-| 'Nat            | Arbitrary precision natural                                          | Bools may be Naturals under the hood, TBD                                                                                  |
-| 'Int            | Arbitrary precision integer                                          |                                                                                                                            |
-| 'Float          | Double precision IEEEE floating point                                |                                                                                                                            |
-| 'Char           | Unicode codepoint                                                    |                                                                                                                            |
-| 'U{₈|₁₆|₃₂|₆₄}  | Unsigned value of {8,16,32,64} bits                                  |                                                                                                                            |
-| 'I{₈|₁₆|₃₂|₆₄}  | Signed value of {8,16,32,64} bits                                    |                                                                                                                            |
-| 'U{₈|₁₆|₃₂|₆₄}I | Unsigned value of {8,16,32,64} bits with infinity                    | The value 0b111.111 is reinterpreted to be infinity; all arithmetic operations are saturating instead of over/underflowing |
-| 'I{₈|₁₆|₃₂|₆₄}I | Signed value of {8,16,32,64} bits with positive and negativeinfinity | See  u{8,16,32,64}I                                                                                                        |
+| Name            | Description                                       | Notes                                                                                                                      |
+|-----------------+---------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------|
+| 'Nat            | Arbitrary precision natural                       | Bools fall under this category, there is no distinct Boolean type                                                          |
+| 'Int            | Arbitrary precision integer                       |                                                                                                                            |
+| 'Float          | Double precision IEEEE floating point             |                                                                                                                            |
+| 'Char           | Unicode codepoint                                 |                                                                                                                            |
+| 'U{₈,₁₆,₃₂,₆₄}  | Unsigned value of {8,16,32,64} bits               |                                                                                                                            |
+| 'I{₈,₁₆,₃₂,₆₄}  | Signed value of {8,16,32,64} bits                 |                                                                                                                            |
+| 'U{₈,₁₆,₃₂,₆₄}I | Unsigned value of {8,16,32,64} bits with infinity | The value 0b111.111 is reinterpreted to be infinity; all arithmetic operations are saturating instead of over/underflowing |
+| 'I{₈,₁₆,₃₂,₆₄}I | Signed value of {8,16,32,64} bits with ±infinity  | See  u{8,16,32,64}I                                                                                                        |
+
+** List of primitives
+Note that all non-commutative dyadic operations have non-symemtrical glyphs! (With the exceptions of: subtract, divide)
+
+| Glyph | Category   | Name             | Type     | Arity   | Notes                          |
+|-------+------------+------------------+----------+---------+--------------------------------|
+| ¯     | Arithemtic | Negate           | Function | Monadic |                                |
+| ¬     | Arithmetic | Not              | Function | Monadic |                                |
+| ±     | Arithmetic | Sign             | Function | Monadic |                                |
+| +     | Arithemtic | Add              | Function | Dyadic  |                                |
+| -     | Arithmetic | Subtract         | Function | Dyadic  |                                |
+| ×     | Arithmetic | Multiply         | Function | Dyadic  |                                |
+| ÷     | Arithmetic | Divide           | Function | Dyadic  |                                |
+| ⌵     | Arithmetic | Absolute Value   | Function | Monadic |                                |
+| TBD   | Arithmetic | Sine             | Function | Monadic |                                |
+| ⨪     | Arithmetic | Reciprocal       | Function | Monadic |                                |
+| √     | Arithmetic | Sqrt             | Function | Monadic |                                |
+| \vert | Arithmetic | Modulo           | Function | Dyadic  |                                |
+| ↥     | Arithmetic | Maximum          | Function | Dyadic  |                                |
+| ↧     | Arithmetic | Minimum          | Function | Dyadic  |                                |
+| ⌊     | Arithmetic | Floor            | Function | Monadic |                                |
+| ⁅     | Arithmetic | Round            | Function | Monadic |                                |
+| ⌈     | Arithmetic | Ceiling          | Function | Monadic |                                |
+| =     | Logic      | Equals           | Function | Monadic |                                |
+| ≠     | Logic      | Not equals       | Function | Dyadic  |                                |
+| <     | Logic      | Less than        | Function | Dyadic  |                                |
+| ≤     | Logic      | Less or equal    | Function | Dyadic  |                                |
+| >     | Logic      | Greater than     | Function | Dyadic  |                                |
+| ≥     | Logic      | Greater or equal | Function | Dyadic  |                                |
+| ∧     | Logic      | And              |          |         |                                |
+| ∨     | Logic      | Or               |          |         |                                |
+| ⊼     | Logic      | Nand             |          |         |                                |
+| ⊽     | Logic      | Nor              |          |         |                                |
+| ⊻     | Logic      | Xor              |          |         |                                |
+| ∤     | Logic      |                  |          |         | TBD, boolean "doesn't divide"? |
+| ⊣     |            | Left             | Function | Dyadic  |                                |
+| ⊢     |            | Right            | Function | Dyadic  |                                |
+| ⍋     |            | Grade up         | Function | Monadic |                                |
+| ⍒     |            | Grade down       | Function | Monadic |                                |
+| ⍉     |            | Transpose        | Function | Monadic |                                |
+| ⇡     |            | Range            | Function | Monad   |                                |
+| ⍆     |            | Sort             | Function | Monadic |                                |
+| √     |            | Sqrt             | Function | Monadic |                                |
+| ⇌     |            | Reverse          | Function | Monadic |                                |
+| ⋯     |            | Bits             | Function | Monadic | Equivalent to =encode2 =       |
+| ⍸     |            | Where            | Function | Monadic |                                |
+| ∊     | Logic      | Memberof         | Function | Dyadic  |                                |
+| ∋     | Logic      | Memberin         | Function | Dyadic  |                                |
+| ∉     | Logic      | Notmemberof      | Function | Dyadic  |                                |
+| ∌     | Logic      | Notmemberin      | Function | Dyadic  |                                |
+| ⌿     |            | Keep/Replicate   | Function | Dyadic  |                                |
+| ≢     |            | Tally/Length     | Function | Monadic |                                |
+|       |            | Depth            | Function | Monadic |                                |
+| ≍     |            | Match            | Function | Dyadic  |                                |
+| ≭     |            | Notmatch         | Function | Dyadic  |                                |
+| ↯     |            | Reshape          | Modifier | Dyadic  |                                |
+| ⊞     |            | Table            | Modifier | Monadic |                                |
+| ⍜     |            | Under            | Modifier | Dyadic  |                                |
+| ⍣     |            | Repeat/Power     | Modifier | Dyadic  |                                |
+
+
+** Special syntax glyphs
+| Glyph | Name            | Meaning                          |
+|-------+-----------------+----------------------------------|
+| :     | Type definition | Declare the type of an atom      |
+| ⊔     | Destructure     | Start pattern matching           |
+| ⊔     | Destructure     | Start pattern matching           |
+| ⋄     | Diamond         | Statment separator               |
+| ⎕     | Quad            | System function; Print to screen |
+
+# | ⧻     |            | Length           | Function | Monadic |                                |
+# | ≡     | Match            | Function | Dyadic  |                                |
+
+# Note to self: the unicode list near #x002207 ∇ NABLA is a goldmine for glyphs!
 
 
 * TODO (design)
@@ -156,6 +230,12 @@ Inversionian lang go brr
   - Think through another possible syntax for trains
 - Document the fact that uppercase/lowercase have implications for functions/nouns
 - Think hard about how to do generics/typeclasses
+- Document the fact that all values are immutable. For mutability, use repeat and such
+
+
+
+
+
 
 [fn:1] I need to understand bqn's better to be able to decide properly, but so far the nested one (I'm conceptualizing it as fix=box) seem nice
 [fn:2] for example, automatically running =tqo "--load shell_prelude.tqo"= on terminal startup (it would be a bad idea to not have bash or zsh as the true underlying shell, as many programs expect them to run all programs)
