@@ -1,6 +1,8 @@
 * TQO
 A LTR, strongly typed apl
 
+*NOTE: THIS IS INCREDIBLY, INCREDIBLY EARLY STAGE: THE IMPLEMENTATION DOES NOT YET EXIST*
+
 (this file is best viewed with an APL font, such as [[https://dyalog.github.io/APL387/][APL387]])
 
 ** Key features
