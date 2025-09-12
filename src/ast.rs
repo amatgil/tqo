@@ -1,0 +1,48 @@
+use std::convert::Infallible;
+
+use crate::{Ident, Primitive, TAtomKind};
+
+enum TypeScalarAnnotation {
+    Base(TAtomKind),
+    Rec(TypeAnnotation),
+}
+struct TypeAnnotation {
+    scalar_type: Box<TypeScalarAnnotation>, // The type
+    shape: ShapeDescription,                // And the shape
+}
+
+enum ShapeDescription {
+    Rank(usize),                                // We know the number of axis
+    Axes(Vec<(Option<String>, Option<usize>)>), // We may know the size or name of each axis. Implies rank
+}
+
+pub struct Sp<T> {
+    /// In bytes
+    start: usize,
+    /// In bytes also
+    end: usize,
+    /// The actual thing
+    value: T,
+}
+
+/// A word, directly as read in
+pub enum Word {
+    Number(String),
+    String(String),
+    Array(Infallible),
+    Primitive(Primitive),
+}
+
+/// What appears in the code, pretty much at any location
+pub enum Item {
+    TypeDef {
+        left: Option<TypeAnnotation>,
+        right: Option<TypeAnnotation>,
+        out: Option<TypeAnnotation>,
+    },
+    Binding {
+        name: Sp<Ident>,
+        code: Vec<Sp<Word>>,
+    },
+    Words(Vec<Sp<Word>>),
+}

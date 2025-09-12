@@ -15,8 +15,6 @@ This mainly manifests in the convention for functions becoming: input on the lef
 *** Fixed arity, mostly
 Some glyphs (like =⍟= log) may be ambivalent (default argument ones are good candidates). However, examples tally being the same as notmatch sucks for Notation as a Tool of Thought :/
 
-*** Monadic functions' arguments doesn't have to always be on the left
-A monadic function may take a singular omega (and thus have type =: Example « 2,N=). That is, a function may be defined to only take a right argument (for example, negation).
 
 *** Naming things: considered good
 In a definition, each name may only refer to one thing (this avoids confusion with regard to "what does omega refer to in this scope?")
@@ -24,7 +22,13 @@ In a definition, each name may only refer to one thing (this avoids confusion wi
 To achieve this, instead of just alpha and omega (and their underscores for modifiers), more glyphs of the greek alphabet: each level of dfn nesting will add two more greek letters (from either side of the alphabet), such that alpha and omega always refer to the outermost arguments, beta and psi refer to the next level of nesting's arguments, etc.
 
 *** Strongly typed
-Every function must have a static type, which consists of either rank or the dimensions of the axes, as well as the underlying scalar type.
+
+Every function must* have a static type, which consists of either rank or the dimensions of the axes, as well as the underlying scalar type.
+
+*in the future
+
+*** Monadic functions' arguments doesn't have to always be on the left
+A monadic function may take a singular omega (and thus have type =: Example « 2,N=). That is, a function may be defined to only take a right argument (for example, negation).
 
 ** Repl, tooling (mostly focused for use in emacs)
 (Still unimplemented)
@@ -67,29 +71,45 @@ Type annotations must take the form of (written in Rust-ish pseudocode)
 
 Annotations must go directly above the function definition:
 (the separator (currently the =,=) between the rank/shape and the scalar type is very TBD)
-#+begin_example
-: '(4) » foo                                 ⍝ foo takes a rank 4 array of unspecified type
+THIS IS PRETTY OUTDATED
+#+begin_example tqo
+: '(4) » foo                                    ⍝ foo takes a rank 4 array of unspecified type
 foo ← {α ⍝ Code goes here ⍝}
 
-: '(4,N) » foo                               ⍝ foo takes a rank 4 array of naturals 
+: '(4,'N) » foo                                 ⍝ foo takes a rank 4 array of naturals 
 foo ← {α ⍝ Code goes here ⍝}
 
-: '[3 _ , N] » bar                           ⍝ bar takes a rank 2 array whose leading dimension has size 3, of naturals
+: '[3 _ , 'N] » bar                             ⍝ bar takes a rank 2 array whose leading dimension has size 3, of naturals
 bar ← {α ⍝ Code goes here ⍝}
 
-: '[width←512 height←512 color←_ , F] » baz  ⍝ baz takes a rank 3 array that represents a 512x512 
-baz ← {α ⍝ Code goes here ⍝}                ⍝ image (the dimension of the color axis is left unspecified) composed of
-                                            ⍝ floats
+: '[width←512 height←512 color←_ , 'F] » baz    ⍝ baz takes a rank 3 array that represents a 512x512 
+baz ← {α ⍝ Code goes here ⍝}                    ⍝ image (the dimension of the color axis is left unspecified) composed of
+                                                ⍝ floats
 
-: '(4,N) » quz «∧ (2,N)                       ⍝ quz is a dyadic function that takes a rank-4 and a rank-2 array, both of naturals
+: '(4,'N) » quz « (2,'N)                        ⍝ quz is a dyadic function that takes a rank-4 and a rank-2 array, both of naturals
 quz ← {α ⍝ Code goes here ⍝}
 
 
-: '(1,N) » waldo « (2,N)                     ⍝ waldo is a dyadic function that takes rank-1 and rank-2 arrays of nats and outputs a rank-3 array of nats
+: '(1,'N) » waldo « (2,'N)                      ⍝ waldo is a dyadic function that takes rank-1 and rank-2 arrays of nats and outputs a rank-3 array of nats
            ↳ (3,N)
 waldo ← {α ⍝ Code goes here ⍝}
                                             
 #+end_example
+
+**** TODO Update the other docs
+#+begin_src tqo
+: '(⍤, 'N) » Avg               ⍝ Rank goes down by one: declare rank, it'll decrease by one
+             ↳ '(⍤-1, 'N)
+Avg ← +/÷≢
+ 
+: ∀T '(≢, T) » Avg             ⍝ Length is exactly 5: declare length, set it to five
+               ↳ '(≢=5, 'T)
+Take5 ← ↑5
+
+: ∀T '(⍴, 'T) » Tra            ⍝ Length is exactly 5: declare length, set it to five
+                ↳ '(⍴⇌, 'T)
+Tra ← ⍉
+#+end_src
 
 *** Unsolved issues
 How to annotate destructure/pattern match? e.g- =(l r) ← ...=
@@ -125,6 +145,12 @@ A more realistic example of product type usage:
   □ Graph  ← ⟨ data  ← '(1, T) ⋄ form ← '(1, Nat)  ⟩  ⍝ Generics' syntax is TBD
 #+end_src
 
+** Trains
+Featuring the standard suite of trains:
+- =(M D M)=
+- =(D D D)=
+
+
 ** Other notes
 No implicit stranding, it is done through ascii underscores
 
@@ -148,64 +174,105 @@ Inversionian lang go brr
 | 'U{₈,₁₆,₃₂,₆₄}I | Unsigned value of {8,16,32,64} bits with infinity | The value 0b111.111 is reinterpreted to be infinity; all arithmetic operations are saturating instead of over/underflowing |
 | 'I{₈,₁₆,₃₂,₆₄}I | Signed value of {8,16,32,64} bits with ±infinity  | See  u{8,16,32,64}I                                                                                                        |
 
+** Bunda-Gerth table
+
+Legend:
+| Name                   | Abreviation |
+|------------------------+-------------|
+| Array                  |             |
+| Alpha-Monadic Function |             |
+| Omega-Monadic Function |             |
+
+| \                      | Array | Alpha-Monadic Function | Omega-Monadic Function | Name | Monadic Modifier | Dyadic Modifier | Assignment Arrow |
+| Array                  | err   |                        |                        |      |                  |                 |                  |
+| Alpha-Monadic Function |       |                        |                        |      |                  |                 |                  |
+| Omega-Monadic Function |       |                        |                        |      |                  |                 |                  |
+| Name                   |       |                        |                        |      |                  |                 |                  |
+| Monadic Modifier       |       |                        |                        |      |                  |                 |                  |
+| Dyadic Modifier        |       |                        |                        |      |                  |                 |                  |
+| Assignment Arrow       |       |                        |                        |      |                  |                 |                  |
+                  
+
+
+# │A a b c  0 1 2 3 4 5 6 7 8 9  ⍺ ⍵  #    ⍝ Arrays                              │
+# │F + - × ÷ ⍳ ⍴ = | ↑ ↓ ⊢ ⊣ ∇             ⍝ Functions                           │
+# │N x y z                                 ⍝ Names (unassigned).                 │
+# │AF                                      ⍝ bound left argument                 │
+# │JOT ∘                                   ⍝ compose / null operand.             │
+# │DOT .                                   ⍝ ref / product.                      │
+# │DX                                      ⍝ dotted ...                          │
+# │MOP ¨ ⍨ &                               ⍝ Monadic operators                   │
+# │DOP ⍣                                   ⍝ Dyadic operators                    │
+# │IDX                                     ⍝ index/axis                          │
+# │XAS                                     ⍝ indexed assignment: [IDX]←          │
+# │SL  ;                                   ⍝ subscript list  ..;..;..            │
+# │CLN :                                   ⍝ colon token                         │
+# │GRD                                     ⍝ guard :                             │
+# │XL  ⋄                                   ⍝ expression list ..⋄..⋄..            │
+# │ARO ←                                   ⍝ assignment arrow                    │
+# │ASG                                     ⍝ name assignment                     │
+# │ERR                                     ⍝ error                               │
+# │() [IDX] {F}                            ⍝ brackets                            │
+# │⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝⍝             
 ** List of primitives
 Note that all non-commutative dyadic operations have non-symemtrical glyphs! (With the exceptions of: subtract, divide)
 
-| Glyph | Category   | Name             | Type     | Arity   | Notes                          |
-|-------+------------+------------------+----------+---------+--------------------------------|
-| ¯     | Arithemtic | Negate           | Function | Monadic |                                |
-| ¬     | Arithmetic | Not              | Function | Monadic |                                |
-| ±     | Arithmetic | Sign             | Function | Monadic |                                |
-| +     | Arithemtic | Add              | Function | Dyadic  |                                |
-| -     | Arithmetic | Subtract         | Function | Dyadic  |                                |
-| ×     | Arithmetic | Multiply         | Function | Dyadic  |                                |
-| ÷     | Arithmetic | Divide           | Function | Dyadic  |                                |
-| ⌵     | Arithmetic | Absolute Value   | Function | Monadic |                                |
-| TBD   | Arithmetic | Sine             | Function | Monadic |                                |
-| ⨪     | Arithmetic | Reciprocal       | Function | Monadic |                                |
-| √     | Arithmetic | Sqrt             | Function | Monadic |                                |
-| \vert | Arithmetic | Modulo           | Function | Dyadic  |                                |
-| ↥     | Arithmetic | Maximum          | Function | Dyadic  |                                |
-| ↧     | Arithmetic | Minimum          | Function | Dyadic  |                                |
-| ⌊     | Arithmetic | Floor            | Function | Monadic |                                |
-| ⁅     | Arithmetic | Round            | Function | Monadic |                                |
-| ⌈     | Arithmetic | Ceiling          | Function | Monadic |                                |
-| =     | Logic      | Equals           | Function | Monadic |                                |
-| ≠     | Logic      | Not equals       | Function | Dyadic  |                                |
-| <     | Logic      | Less than        | Function | Dyadic  |                                |
-| ≤     | Logic      | Less or equal    | Function | Dyadic  |                                |
-| >     | Logic      | Greater than     | Function | Dyadic  |                                |
-| ≥     | Logic      | Greater or equal | Function | Dyadic  |                                |
-| ∧     | Logic      | And              |          |         |                                |
-| ∨     | Logic      | Or               |          |         |                                |
-| ⊼     | Logic      | Nand             |          |         |                                |
-| ⊽     | Logic      | Nor              |          |         |                                |
-| ⊻     | Logic      | Xor              |          |         |                                |
-| ∤     | Logic      |                  |          |         | TBD, boolean "doesn't divide"? |
-| ⊣     |            | Left             | Function | Dyadic  |                                |
-| ⊢     |            | Right            | Function | Dyadic  |                                |
-| ⍋     |            | Grade up         | Function | Monadic |                                |
-| ⍒     |            | Grade down       | Function | Monadic |                                |
-| ⍉     |            | Transpose        | Function | Monadic |                                |
-| ⇡     |            | Range            | Function | Monad   |                                |
-| ⍆     |            | Sort             | Function | Monadic |                                |
-| √     |            | Sqrt             | Function | Monadic |                                |
-| ⇌     |            | Reverse          | Function | Monadic |                                |
-| ⋯     |            | Bits             | Function | Monadic | Equivalent to =encode2 =       |
-| ⍸     |            | Where            | Function | Monadic |                                |
-| ∊     | Logic      | Memberof         | Function | Dyadic  |                                |
-| ∋     | Logic      | Memberin         | Function | Dyadic  |                                |
-| ∉     | Logic      | Notmemberof      | Function | Dyadic  |                                |
-| ∌     | Logic      | Notmemberin      | Function | Dyadic  |                                |
-| ⌿     |            | Keep/Replicate   | Function | Dyadic  |                                |
-| ≢     |            | Tally/Length     | Function | Monadic |                                |
-|       |            | Depth            | Function | Monadic |                                |
-| ≍     |            | Match            | Function | Dyadic  |                                |
-| ≭     |            | Notmatch         | Function | Dyadic  |                                |
-| ↯     |            | Reshape          | Modifier | Dyadic  |                                |
-| ⊞     |            | Table            | Modifier | Monadic |                                |
-| ⍜     |            | Under            | Modifier | Dyadic  |                                |
-| ⍣     |            | Repeat/Power     | Modifier | Dyadic  |                                |
+| Glyph | Category   | Name             | Type     | Arity   | Notes                                           |
+|-------+------------+------------------+----------+---------+-------------------------------------------------|
+| ¯     | Arithemtic | Negate           | Function | Monadic |                                                 |
+| ¬     | Arithmetic | Not              | Function | Monadic |                                                 |
+| ±     | Arithmetic | Sign             | Function | Monadic |                                                 |
+| +     | Arithemtic | Add              | Function | Dyadic  |                                                 |
+| -     | Arithmetic | Subtract         | Function | Dyadic  |                                                 |
+| ×     | Arithmetic | Multiply         | Function | Dyadic  |                                                 |
+| ÷     | Arithmetic | Divide           | Function | Dyadic  |                                                 |
+| ⌵     | Arithmetic | Absolute Value   | Function | Monadic |                                                 |
+| TBD   | Arithmetic | Sine             | Function | Monadic |                                                 |
+| ⨪     | Arithmetic | Reciprocal       | Function | Monadic |                                                 |
+| √     | Arithmetic | Sqrt             | Function | Monadic |                                                 |
+| \vert | Arithmetic | Modulo           | Function | Dyadic  | What if this was '%' and '\vert' was 'divides'? |
+| ↥     | Arithmetic | Maximum          | Function | Dyadic  |                                                 |
+| ↧     | Arithmetic | Minimum          | Function | Dyadic  |                                                 |
+| ⌊     | Arithmetic | Floor            | Function | Monadic |                                                 |
+| ⁅     | Arithmetic | Round            | Function | Monadic |                                                 |
+| ⌈     | Arithmetic | Ceiling          | Function | Monadic |                                                 |
+| =     | Logic      | Equals           | Function | Monadic |                                                 |
+| ≠     | Logic      | Not equals       | Function | Dyadic  |                                                 |
+| <     | Logic      | Less than        | Function | Dyadic  |                                                 |
+| ≤     | Logic      | Less or equal    | Function | Dyadic  |                                                 |
+| >     | Logic      | Greater than     | Function | Dyadic  |                                                 |
+| ≥     | Logic      | Greater or equal | Function | Dyadic  |                                                 |
+| ∧     | Logic      | And              |          |         |                                                 |
+| ∨     | Logic      | Or               |          |         |                                                 |
+| ⊼     | Logic      | Nand             |          |         |                                                 |
+| ⊽     | Logic      | Nor              |          |         |                                                 |
+| ⊻     | Logic      | Xor              |          |         |                                                 |
+| ∤     | Logic      |                  |          |         | TBD, boolean "doesn't divide"?                  |
+| ⊣     |            | Left             | Function | Dyadic  |                                                 |
+| ⊢     |            | Right            | Function | Dyadic  |                                                 |
+| ⍋     |            | Grade up         | Function | Monadic |                                                 |
+| ⍒     |            | Grade down       | Function | Monadic |                                                 |
+| ⍉     |            | Transpose        | Function | Monadic |                                                 |
+| ⇡     |            | Range            | Function | Monad   |                                                 |
+| ⍆     |            | Sort             | Function | Monadic |                                                 |
+| √     |            | Sqrt             | Function | Monadic |                                                 |
+| ⇌     |            | Reverse          | Function | Monadic |                                                 |
+| ⋯     |            | Bits             | Function | Monadic | Equivalent to =encode2 =                        |
+| ⍸     |            | Where            | Function | Monadic |                                                 |
+| ∊     | Logic      | Memberof         | Function | Dyadic  |                                                 |
+| ∋     | Logic      | Memberin         | Function | Dyadic  |                                                 |
+| ∉     | Logic      | Notmemberof      | Function | Dyadic  |                                                 |
+| ∌     | Logic      | Notmemberin      | Function | Dyadic  |                                                 |
+| ⌿     |            | Keep/Replicate   | Function | Dyadic  |                                                 |
+| ≢     |            | Tally/Length     | Function | Monadic |                                                 |
+|       |            | Depth            | Function | Monadic |                                                 |
+| ≍     |            | Match            | Function | Dyadic  |                                                 |
+| ≭     |            | Notmatch         | Function | Dyadic  |                                                 |
+| ⍴     |            | Shape            | Function | Monadic |                                                 |
+| ↯     |            | Reshape          | Function | Dyadic  |                                                 |
+| ⊞     |            | Table            | Modifier | Monadic |                                                 |
+| ⍜     |            | Under            | Modifier | Dyadic  |                                                 |
+| ⍣     |            | Repeat/Power     | Modifier | Dyadic  |                                                 |
 
 
 ** Special syntax glyphs
@@ -222,7 +289,14 @@ Note that all non-commutative dyadic operations have non-symemtrical glyphs! (Wi
 
 # Note to self: the unicode list near #x002207 ∇ NABLA is a goldmine for glyphs!
 
+* TODO Tacit
+Being of fixed-arity, forks and atops look as follows:
 
+....
+
+	
+
+f g Y
 * TODO (design)
 - Decide syntax for doccoments
 - Document the fact it's leading axis (and that evert exists)
@@ -231,6 +305,7 @@ Note that all non-commutative dyadic operations have non-symemtrical glyphs! (Wi
 - Document the fact that uppercase/lowercase have implications for functions/nouns
 - Think hard about how to do generics/typeclasses
 - Document the fact that all values are immutable. For mutability, use repeat and such
+- Memory mapped files
 
 
 
