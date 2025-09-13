@@ -117,3 +117,50 @@ enum Primitive {
 //    scalar_type: TScalarType, // The type
 //    shape: TShapeDescription, // And the shape
 //}
+
+#[test]
+fn bunda_gerth_binding_powers() {
+    // See README.md/Bunda-Gerth for the actual table
+    let tbd = None; // for now!
+    let table: [[Option<u8>; 10]; 10] = [
+        /*A*/ [None, tbd, None, tbd, None, tbd, tbd, tbd, tbd, tbd],
+        /*αMF*/ [None, tbd, None, tbd, None, tbd, tbd, tbd, tbd, tbd],
+        /*⍵MF*/ [tbd, None, tbd, None, tbd, tbd, None, None, None, tbd],
+        /*DF*/ [tbd, None, tbd, None, tbd, tbd, None, None, None, tbd],
+        /*N*/ [None, tbd, None, tbd, None, tbd, tbd, tbd, tbd, tbd],
+        /*αMM*/ [None, tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd],
+        /*⍵MM*/ [tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd],
+        /*DM*/ [tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd],
+        /*JOT*/ [tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd],
+        /*ARR*/ [tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd],
+    ];
+
+    // This is ordered
+    #[repr(u8)]
+    enum Ty {
+        A,
+        A_MF,
+        O_MF,
+        DF,
+        N,
+        A_MM,
+        O_MM,
+        DM,
+        JOT,
+        Arr,
+    }
+    use Ty::*;
+
+    let gt_conditions = [
+        ((A_MF, DM), (DM, DF)),
+        ((DF, DM), (DM, DF)),
+        ((DF, JOT), (DM, DF)),
+    ];
+
+    for (lesser, greater) in gt_conditions {
+        let lesser_prio = table[lesser.0 as u8 as usize][lesser.1 as u8 as usize];
+        let greater_prio = table[greater.0 as u8 as usize][greater.1 as u8 as usize];
+
+        assert!(lesser_prio.is_none() || greater_prio.unwrap() > lesser_prio.unwrap())
+    }
+}

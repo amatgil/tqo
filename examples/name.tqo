@@ -1,0 +1,5 @@
+
+
+: name
+  ↳ '(1, char)
+name ← "cas"-@a+1◿26⇌+"APL"

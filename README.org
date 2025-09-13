@@ -189,7 +189,7 @@ Legend:
 | Alpha-Monadic Modifier | αMM         |
 | Omega-Monadic Modifier | ⍵MM         |
 | Dyadic Modifier        | DM          |
-| Joy                    | JOT         |
+| Jot                    | JOT         |
 | Assignment Arrow       | ARR         |
 | Assignment             | ASS         |
 
@@ -197,26 +197,28 @@ Legend:
 # are decided, substitute them in in the legend and table
 
 Table:
-| Left\Right | A        | αMF      | ⍵MF      | DF       | N        | αMM      | ⍵MM | DM      | ARR |
-| /          | <        | <        | <        | <        | <        | <        | <   | <       | <   |
-|------------+----------+----------+----------+----------+----------+----------+-----+---------+-----|
-| A          | _        | (x, A)   | _        | (x,⍵MF)  | _        | A        |     |         |     |
-|------------+----------+----------+----------+----------+----------+----------+-----+---------+-----|
-| αMF        | _        | (x, αMF) | _        | (x, DF)  | _        | (x, αMF) |     |         |     |
-|------------+----------+----------+----------+----------+----------+----------+-----+---------+-----|
-| ⍵MF        | (x, A)   | _        | (x,⍵MF)  |          | (x, A)   | (x, αMF) |     |         |     |
-|------------+----------+----------+----------+----------+----------+----------+-----+---------+-----|
-| DF         | (x,MFα)  | _        | (x, DF)  |          | (x, αMF) | (x, αMF) |     |         |     |
-|------------+----------+----------+----------+----------+----------+----------+-----+---------+-----|
-| N          | _        | (x, A)   | _        | (x, ⍵MF) | _        | (x, αMF) |     |         |     |
-|------------+----------+----------+----------+----------+----------+----------+-----+---------+-----|
-| αMM        | _        |          |          |          |          | (x, αMM) |     |         |     |
-|------------+----------+----------+----------+----------+----------+----------+-----+---------+-----|
-| ⍵MM        |          |          |          |          |          |          |     |         |     |
-|------------+----------+----------+----------+----------+----------+----------+-----+---------+-----|
-| DM         | (x, MM)  |          |          |          |          |          |     |         |     |
-|------------+----------+----------+----------+----------+----------+----------+-----+---------+-----|
-| ARR        | (x, ASS) | (x, ASS) | (x, ASS) | (x, ASS) | (x, ASS) | (x, ASS) |     | (x,ASS) | err |
+| Left\Right | A        | αMF      | ⍵MF      | DF       | N        | αMM      | ⍵MM      | DM      | JOT      | ARR       |
+| /          | <        | <        | <        | <        | <        | <        | <        | <       | <        | <         |
+|------------+----------+----------+----------+----------+----------+----------+----------+---------+----------+-----------|
+| A          | _        | (x, A)   | _        | (x,⍵MF)  | _        | (x, A)   |          |         |          | (x, err)  |
+|------------+----------+----------+----------+----------+----------+----------+----------+---------+----------+-----------|
+| αMF        | _        | (x, αMF) | _        | (x, DF)  | _        | (x, αMF) |          |         | err?     | (x, err)  |
+|------------+----------+----------+----------+----------+----------+----------+----------+---------+----------+-----------|
+| ⍵MF        | (x, A)   | _        | (x,⍵MF)  |          | (x, A)   | (x, αMF) |          |         |          | (x, err)  |
+|------------+----------+----------+----------+----------+----------+----------+----------+---------+----------+-----------|
+| DF         | (x,MFα)  | _        | (x, DF)  | _        | (x, αMF) | (x, αMF) |          |         |          | (x, err)  |
+|------------+----------+----------+----------+----------+----------+----------+----------+---------+----------+-----------|
+| N          | _        | (x, A)   | _        | (x, ⍵MF) | _        | (x, αMF) |          |         |          | (x, bind) |
+|------------+----------+----------+----------+----------+----------+----------+----------+---------+----------+-----------|
+| αMM        | _        |          |          |          |          | (x, αMM) |          |         | err?     | (x, err)  |
+|------------+----------+----------+----------+----------+----------+----------+----------+---------+----------+-----------|
+| ⍵MM        |          |          |          |          |          |          |          |         |          | (x, err)  |
+|------------+----------+----------+----------+----------+----------+----------+----------+---------+----------+-----------|
+| DM         | (x, MM)  |          |          |          |          |          |          |         |          | (x, err)  |
+|------------+----------+----------+----------+----------+----------+----------+----------+---------+----------+-----------|
+| JOT        |          |          | err?     |          |          |          | err?     |         |          |           |
+|------------+----------+----------+----------+----------+----------+----------+----------+---------+----------+-----------|
+| ARR        | (x, ASS) | (x, ASS) | (x, ASS) | (x, ASS) | (x, ASS) | (x, ASS) | (x, ASS) | (x,ASS) | (x, err) | (x, err)  |
 
 
 # │A a b c  0 1 2 3 4 5 6 7 8 9  ⍺ ⍵  #    ⍝ Arrays                              │
@@ -242,62 +244,64 @@ Table:
 ** List of primitives
 Note that all non-commutative dyadic operations have non-symemtrical glyphs! (With the exceptions of: subtract, divide)
 
-| Glyph | Category   | Name             | Type     | Arity   | Notes                                           |
-|-------+------------+------------------+----------+---------+-------------------------------------------------|
-| ¯     | Arithemtic | Negate           | Function | Monadic |                                                 |
-| ¬     | Arithmetic | Not              | Function | Monadic |                                                 |
-| ±     | Arithmetic | Sign             | Function | Monadic |                                                 |
-| +     | Arithemtic | Add              | Function | Dyadic  |                                                 |
-| -     | Arithmetic | Subtract         | Function | Dyadic  |                                                 |
-| ×     | Arithmetic | Multiply         | Function | Dyadic  |                                                 |
-| ÷     | Arithmetic | Divide           | Function | Dyadic  |                                                 |
-| ⌵     | Arithmetic | Absolute Value   | Function | Monadic |                                                 |
-| TBD   | Arithmetic | Sine             | Function | Monadic |                                                 |
-| ⨪     | Arithmetic | Reciprocal       | Function | Monadic |                                                 |
-| √     | Arithmetic | Sqrt             | Function | Monadic |                                                 |
-| \vert | Arithmetic | Modulo           | Function | Dyadic  | What if this was '%' and '\vert' was 'divides'? |
-| ↥     | Arithmetic | Maximum          | Function | Dyadic  |                                                 |
-| ↧     | Arithmetic | Minimum          | Function | Dyadic  |                                                 |
-| ⌊     | Arithmetic | Floor            | Function | Monadic |                                                 |
-| ⁅     | Arithmetic | Round            | Function | Monadic |                                                 |
-| ⌈     | Arithmetic | Ceiling          | Function | Monadic |                                                 |
-| =     | Logic      | Equals           | Function | Monadic |                                                 |
-| ≠     | Logic      | Not equals       | Function | Dyadic  |                                                 |
-| <     | Logic      | Less than        | Function | Dyadic  |                                                 |
-| ≤     | Logic      | Less or equal    | Function | Dyadic  |                                                 |
-| >     | Logic      | Greater than     | Function | Dyadic  |                                                 |
-| ≥     | Logic      | Greater or equal | Function | Dyadic  |                                                 |
-| ∧     | Logic      | And              |          |         |                                                 |
-| ∨     | Logic      | Or               |          |         |                                                 |
-| ⊼     | Logic      | Nand             |          |         |                                                 |
-| ⊽     | Logic      | Nor              |          |         |                                                 |
-| ⊻     | Logic      | Xor              |          |         |                                                 |
-| ∤     | Logic      |                  |          |         | TBD, boolean "doesn't divide"?                  |
-| ⊣     |            | Left             | Function | Dyadic  |                                                 |
-| ⊢     |            | Right            | Function | Dyadic  |                                                 |
-| ⍋     |            | Grade up         | Function | Monadic |                                                 |
-| ⍒     |            | Grade down       | Function | Monadic |                                                 |
-| ⍉     |            | Transpose        | Function | Monadic |                                                 |
-| ⇡     |            | Range            | Function | Monad   |                                                 |
-| ⍆     |            | Sort             | Function | Monadic |                                                 |
-| √     |            | Sqrt             | Function | Monadic |                                                 |
-| ⇌     |            | Reverse          | Function | Monadic |                                                 |
-| ⋯     |            | Bits             | Function | Monadic | Equivalent to =encode2 =                        |
-| ⍸     |            | Where            | Function | Monadic |                                                 |
-| ∊     | Logic      | Memberof         | Function | Dyadic  |                                                 |
-| ∋     | Logic      | Memberin         | Function | Dyadic  |                                                 |
-| ∉     | Logic      | Notmemberof      | Function | Dyadic  |                                                 |
-| ∌     | Logic      | Notmemberin      | Function | Dyadic  |                                                 |
-| ⌿     |            | Keep/Replicate   | Function | Dyadic  |                                                 |
-| ≢     |            | Tally/Length     | Function | Monadic |                                                 |
-|       |            | Depth            | Function | Monadic |                                                 |
-| ≍     |            | Match            | Function | Dyadic  |                                                 |
-| ≭     |            | Notmatch         | Function | Dyadic  |                                                 |
-| ⍴     |            | Shape            | Function | Monadic |                                                 |
-| ↯     |            | Reshape          | Function | Dyadic  |                                                 |
-| ⊞     |            | Table            | Modifier | Monadic |                                                 |
-| ⍜     |            | Under            | Modifier | Dyadic  |                                                 |
-| ⍣     |            | Repeat/Power     | Modifier | Dyadic  |                                                 |
+| Glyph  | Category   | Name             | Type     | Arity   | Notes                                      |
+|--------+------------+------------------+----------+---------+--------------------------------------------|
+| ¯      | Arithemtic | Negate           | Function | Monadic |                                            |
+| ¬      | Arithmetic | Not              | Function | Monadic |                                            |
+| ±      | Arithmetic | Sign             | Function | Monadic |                                            |
+| +      | Arithemtic | Add              | Function | Dyadic  |                                            |
+| -      | Arithmetic | Subtract         | Function | Dyadic  |                                            |
+| ×      | Arithmetic | Multiply         | Function | Dyadic  |                                            |
+| ÷      | Arithmetic | Divide           | Function | Dyadic  |                                            |
+| ◿      | Arithmetic | Modulo           | Function | Dyadic  |                                            |
+| TBD    | Arithmetic | Remainder        | Function | Dyadic  |                                            |
+| ⌵      | Arithmetic | Absolute Value   | Function | Monadic |                                            |
+| TBD    | Arithmetic | Sine             | Function | Monadic |                                            |
+| ⨪      | Arithmetic | Reciprocal       | Function | Monadic |                                            |
+| √      | Arithmetic | Sqrt             | Function | Monadic |                                            |
+| ↥      | Arithmetic | Maximum          | Function | Dyadic  |                                            |
+| ↧      | Arithmetic | Minimum          | Function | Dyadic  |                                            |
+| ⌊      | Arithmetic | Floor            | Function | Monadic |                                            |
+| ⁅      | Arithmetic | Round            | Function | Monadic |                                            |
+| ⌈      | Arithmetic | Ceiling          | Function | Monadic |                                            |
+| \equal | Logic      | Equals           | Function | Monadic |                                            |
+| ≠      | Logic      | Not equals       | Function | Dyadic  |                                            |
+| <      | Logic      | Less than        | Function | Dyadic  |                                            |
+| ≤      | Logic      | Less or equal    | Function | Dyadic  |                                            |
+| >      | Logic      | Greater than     | Function | Dyadic  |                                            |
+| ≥      | Logic      | Greater or equal | Function | Dyadic  |                                            |
+| ∧      | Logic      | And              |          |         |                                            |
+| ∨      | Logic      | Or               |          |         |                                            |
+| ⊼      | Logic      | Nand             |          |         |                                            |
+| ⊽      | Logic      | Nor              |          |         |                                            |
+| ⊻      | Logic      | Xor              |          |         | Extends to naturals as absolute difference |
+| \vert  | Logic      | Divides          | Function | Dyadic  |                                            |
+| ∤      | Logic      | Nodivides        |          |         |                                            |
+| ⊣      |            | Left             | Function | Dyadic  |                                            |
+| ⊢      |            | Right            | Function | Dyadic  |                                            |
+| ⍋      |            | Grade up         | Function | Monadic |                                            |
+| ⍒      |            | Grade down       | Function | Monadic |                                            |
+| ⍉      |            | Transpose        | Function | Monadic |                                            |
+| ⇡      |            | Range            | Function | Monad   |                                            |
+| ⍆      |            | Sort             | Function | Monadic |                                            |
+| √      |            | Sqrt             | Function | Monadic |                                            |
+| ⇌      |            | Reverse          | Function | Monadic |                                            |
+| ⋯      |            | Bits             | Function | Monadic | Equivalent to =encode2 =                   |
+| ⍸      |            | Where            | Function | Monadic |                                            |
+| ∊      | Logic      | Memberof         | Function | Dyadic  |                                            |
+| ∋      | Logic      | Memberin         | Function | Dyadic  |                                            |
+| ∉      | Logic      | Notmemberof      | Function | Dyadic  |                                            |
+| ∌      | Logic      | Notmemberin      | Function | Dyadic  |                                            |
+| ⌿      |            | Keep/Replicate   | Function | Dyadic  |                                            |
+| ≢      |            | Tally/Length     | Function | Monadic |                                            |
+|        |            | Depth            | Function | Monadic |                                            |
+| ≍      |            | Match            | Function | Dyadic  |                                            |
+| ≭      |            | Notmatch         | Function | Dyadic  |                                            |
+| ⍴      |            | Shape            | Function | Monadic |                                            |
+| ↯      |            | Reshape          | Function | Dyadic  |                                            |
+| ⊞      |            | Table            | Modifier | Monadic |                                            |
+| ⍜      |            | Under            | Modifier | Dyadic  |                                            |
+| ⍣      |            | Repeat/Power     | Modifier | Dyadic  |                                            |
 
 
 ** Special syntax glyphs
