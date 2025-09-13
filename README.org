@@ -14,9 +14,8 @@ On top of arrays, we have haskell-esque =data= ADTs: one may define enummeration
 *** Left To Right
 This mainly manifests in the convention for functions becoming: input on the left, data on the right.
 
-*** Fixed arity, mostly
-Some glyphs (like =⍟= log) may be ambivalent (default argument ones are good candidates). However, examples tally being the same as notmatch sucks for Notation as a Tool of Thought :/
-
+*** TODO Fixed arity
+# Some glyphs (like =⍟= log) may be ambivalent (default argument ones are good candidates). However, examples tally being the same as notmatch sucks for Notation as a Tool of Thought :/
 
 *** Naming things: considered good
 In a definition, each name may only refer to one thing (this avoids confusion with regard to "what does omega refer to in this scope?")

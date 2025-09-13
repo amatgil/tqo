@@ -27,6 +27,7 @@ pub struct Sp<T> {
 
 /// A word, directly as read in
 pub enum Word {
+    // Nat -> Int -> Float
     Number(String),
     String(String),
     Array(Infallible),
