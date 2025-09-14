@@ -3,12 +3,49 @@
 
 use crate::{ast::Sp, *};
 
-#[derive(Clone, Copy)]
-enum Token {}
+#[derive(Clone)]
+enum Token {
+    Number,
+    String,
+    Char,
+    PrimArray,
+    PrimAFn,
+    PrimOFn,
+    PrimAMod,
+    PrimOMod,
+    ArrayName,
+    AFnName,
+    OFnName,
+    // AModName,  <-- CANNOT EXIST! There's no way to construct a primitive of this kind
+    OModName,
+    ArrayAssign,
+    FnAssign,
+    ModAssign,
+    Parenthesized(Vec<Sp<Token>>),
+}
 
 impl Token {
-    fn to_tree(&self) -> Tree {
-        match *self {}
+    fn to_tree(t: Sp<Token>) -> Tree {
+        let leaf = |cat| Box::new(ExprParseTree::Leaf { cat, t: t.clone() });
+
+        match t.value {
+            Token::Number => leaf(Category::A),
+            Token::String => leaf(Category::A),
+            Token::Char => leaf(Category::A),
+            Token::PrimArray => leaf(Category::A),
+            Token::PrimAFn => leaf(Category::AMf),
+            Token::PrimOFn => leaf(Category::OMf),
+            Token::PrimAMod => leaf(Category::AMm),
+            Token::PrimOMod => leaf(Category::OMm),
+            Token::ArrayName => leaf(Category::N),
+            Token::AFnName => leaf(Category::AMf),
+            Token::OFnName => leaf(Category::AMf),
+            Token::OModName => leaf(Category::OMm),
+            Token::ArrayAssign => leaf(Category::Ass),
+            Token::FnAssign => leaf(Category::Ass),
+            Token::ModAssign => leaf(Category::Ass),
+            Token::Parenthesized(tokens) => todo!(),
+        }
     }
 }
 
@@ -41,18 +78,19 @@ enum Category {
 impl Category {
     #[rustfmt::skip]
     fn binding_power_of(a: &Self, b: &Self) -> Option<(u8, ExprParseTree)> {
+        use Category as C;
         match (a, b) {
-            (Category::A, Category::A) => todo!(), (Category::A, Category::AMf) => todo!(), (Category::A, Category::OMf) => todo!(), (Category::A, Category::Df) => todo!(), (Category::A, Category::N) => todo!(), (Category::A, Category::AMm) => todo!(), (Category::A, Category::OMm) => todo!(), (Category::A, Category::Dm) => todo!(), (Category::A, Category::Jot) => todo!(), (Category::A, Category::Arr) => todo!(), (Category::A, Category::Ass) => todo!(),
-            (Category::AMf, Category::A) => todo!(), (Category::AMf, Category::AMf) => todo!(), (Category::AMf, Category::OMf) => todo!(), (Category::AMf, Category::Df) => todo!(), (Category::AMf, Category::N) => todo!(), (Category::AMf, Category::AMm) => todo!(), (Category::AMf, Category::OMm) => todo!(), (Category::AMf, Category::Dm) => todo!(), (Category::AMf, Category::Jot) => todo!(), (Category::AMf, Category::Arr) => todo!(), (Category::AMf, Category::Ass) => todo!(),
-            (Category::OMf, Category::A) => todo!(), (Category::OMf, Category::AMf) => todo!(), (Category::OMf, Category::OMf) => todo!(), (Category::OMf, Category::Df) => todo!(), (Category::OMf, Category::N) => todo!(), (Category::OMf, Category::AMm) => todo!(), (Category::OMf, Category::OMm) => todo!(), (Category::OMf, Category::Dm) => todo!(), (Category::OMf, Category::Jot) => todo!(), (Category::OMf, Category::Arr) => todo!(), (Category::OMf, Category::Ass) => todo!(),
-            (Category::Df, Category::A) => todo!(), (Category::Df, Category::AMf) => todo!(), (Category::Df, Category::OMf) => todo!(), (Category::Df, Category::Df) => todo!(), (Category::Df, Category::N) => todo!(), (Category::Df, Category::AMm) => todo!(), (Category::Df, Category::OMm) => todo!(), (Category::Df, Category::Dm) => todo!(), (Category::Df, Category::Jot) => todo!(), (Category::Df, Category::Arr) => todo!(), (Category::Df, Category::Ass) => todo!(),
-            (Category::N, Category::A) => todo!(), (Category::N, Category::AMf) => todo!(), (Category::N, Category::OMf) => todo!(), (Category::N, Category::Df) => todo!(), (Category::N, Category::N) => todo!(), (Category::N, Category::AMm) => todo!(), (Category::N, Category::OMm) => todo!(), (Category::N, Category::Dm) => todo!(), (Category::N, Category::Jot) => todo!(), (Category::N, Category::Arr) => todo!(), (Category::N, Category::Ass) => todo!(),
-            (Category::AMm, Category::A) => todo!(), (Category::AMm, Category::AMf) => todo!(), (Category::AMm, Category::OMf) => todo!(), (Category::AMm, Category::Df) => todo!(), (Category::AMm, Category::N) => todo!(), (Category::AMm, Category::AMm) => todo!(), (Category::AMm, Category::OMm) => todo!(), (Category::AMm, Category::Dm) => todo!(), (Category::AMm, Category::Jot) => todo!(), (Category::AMm, Category::Arr) => todo!(), (Category::AMm, Category::Ass) => todo!(),
-            (Category::OMm, Category::A) => todo!(), (Category::OMm, Category::AMf) => todo!(), (Category::OMm, Category::OMf) => todo!(), (Category::OMm, Category::Df) => todo!(), (Category::OMm, Category::N) => todo!(), (Category::OMm, Category::AMm) => todo!(), (Category::OMm, Category::OMm) => todo!(), (Category::OMm, Category::Dm) => todo!(), (Category::OMm, Category::Jot) => todo!(), (Category::OMm, Category::Arr) => todo!(), (Category::OMm, Category::Ass) => todo!(),
-            (Category::Dm, Category::A) => todo!(), (Category::Dm, Category::AMf) => todo!(), (Category::Dm, Category::OMf) => todo!(), (Category::Dm, Category::Df) => todo!(), (Category::Dm, Category::N) => todo!(), (Category::Dm, Category::AMm) => todo!(), (Category::Dm, Category::OMm) => todo!(), (Category::Dm, Category::Dm) => todo!(), (Category::Dm, Category::Jot) => todo!(), (Category::Dm, Category::Arr) => todo!(), (Category::Dm, Category::Ass) => todo!(),
-            (Category::Jot, Category::A) => todo!(), (Category::Jot, Category::AMf) => todo!(), (Category::Jot, Category::OMf) => todo!(), (Category::Jot, Category::Df) => todo!(), (Category::Jot, Category::N) => todo!(), (Category::Jot, Category::AMm) => todo!(), (Category::Jot, Category::OMm) => todo!(), (Category::Jot, Category::Dm) => todo!(), (Category::Jot, Category::Jot) => todo!(), (Category::Jot, Category::Arr) => todo!(), (Category::Jot, Category::Ass) => todo!(),
-            (Category::Arr, Category::A) => todo!(), (Category::Arr, Category::AMf) => todo!(), (Category::Arr, Category::OMf) => todo!(), (Category::Arr, Category::Df) => todo!(), (Category::Arr, Category::N) => todo!(), (Category::Arr, Category::AMm) => todo!(), (Category::Arr, Category::OMm) => todo!(), (Category::Arr, Category::Dm) => todo!(), (Category::Arr, Category::Jot) => todo!(), (Category::Arr, Category::Arr) => todo!(), (Category::Arr, Category::Ass) => todo!(),
-            (Category::Ass, Category::A) => todo!(), (Category::Ass, Category::AMf) => todo!(), (Category::Ass, Category::OMf) => todo!(), (Category::Ass, Category::Df) => todo!(), (Category::Ass, Category::N) => todo!(), (Category::Ass, Category::AMm) => todo!(), (Category::Ass, Category::OMm) => todo!(), (Category::Ass, Category::Dm) => todo!(), (Category::Ass, Category::Jot) => todo!(), (Category::Ass, Category::Arr) => todo!(), (Category::Ass, Category::Ass) => todo!(),
+            (C::A, C::A) => todo!(), (C::A, C::AMf) => todo!(), (C::A, C::OMf) => todo!(), (C::A, C::Df) => todo!(), (C::A, C::N) => todo!(), (C::A, C::AMm) => todo!(), (C::A, C::OMm) => todo!(), (C::A, C::Dm) => todo!(), (C::A, C::Jot) => todo!(), (C::A, C::Arr) => todo!(), (C::A, C::Ass) => todo!(),
+            (C::AMf, C::A) => todo!(), (C::AMf, C::AMf) => todo!(), (C::AMf, C::OMf) => todo!(), (C::AMf, C::Df) => todo!(), (C::AMf, C::N) => todo!(), (C::AMf, C::AMm) => todo!(), (C::AMf, C::OMm) => todo!(), (C::AMf, C::Dm) => todo!(), (C::AMf, C::Jot) => todo!(), (C::AMf, C::Arr) => todo!(), (C::AMf, C::Ass) => todo!(),
+            (C::OMf, C::A) => todo!(), (C::OMf, C::AMf) => todo!(), (C::OMf, C::OMf) => todo!(), (C::OMf, C::Df) => todo!(), (C::OMf, C::N) => todo!(), (C::OMf, C::AMm) => todo!(), (C::OMf, C::OMm) => todo!(), (C::OMf, C::Dm) => todo!(), (C::OMf, C::Jot) => todo!(), (C::OMf, C::Arr) => todo!(), (C::OMf, C::Ass) => todo!(),
+            (C::Df, C::A) => todo!(), (C::Df, C::AMf) => todo!(), (C::Df, C::OMf) => todo!(), (C::Df, C::Df) => todo!(), (C::Df, C::N) => todo!(), (C::Df, C::AMm) => todo!(), (C::Df, C::OMm) => todo!(), (C::Df, C::Dm) => todo!(), (C::Df, C::Jot) => todo!(), (C::Df, C::Arr) => todo!(), (C::Df, C::Ass) => todo!(),
+            (C::N, C::A) => todo!(), (C::N, C::AMf) => todo!(), (C::N, C::OMf) => todo!(), (C::N, C::Df) => todo!(), (C::N, C::N) => todo!(), (C::N, C::AMm) => todo!(), (C::N, C::OMm) => todo!(), (C::N, C::Dm) => todo!(), (C::N, C::Jot) => todo!(), (C::N, C::Arr) => todo!(), (C::N, C::Ass) => todo!(),
+            (C::AMm, C::A) => todo!(), (C::AMm, C::AMf) => todo!(), (C::AMm, C::OMf) => todo!(), (C::AMm, C::Df) => todo!(), (C::AMm, C::N) => todo!(), (C::AMm, C::AMm) => todo!(), (C::AMm, C::OMm) => todo!(), (C::AMm, C::Dm) => todo!(), (C::AMm, C::Jot) => todo!(), (C::AMm, C::Arr) => todo!(), (C::AMm, C::Ass) => todo!(),
+            (C::OMm, C::A) => todo!(), (C::OMm, C::AMf) => todo!(), (C::OMm, C::OMf) => todo!(), (C::OMm, C::Df) => todo!(), (C::OMm, C::N) => todo!(), (C::OMm, C::AMm) => todo!(), (C::OMm, C::OMm) => todo!(), (C::OMm, C::Dm) => todo!(), (C::OMm, C::Jot) => todo!(), (C::OMm, C::Arr) => todo!(), (C::OMm, C::Ass) => todo!(),
+            (C::Dm, C::A) => todo!(), (C::Dm, C::AMf) => todo!(), (C::Dm, C::OMf) => todo!(), (C::Dm, C::Df) => todo!(), (C::Dm, C::N) => todo!(), (C::Dm, C::AMm) => todo!(), (C::Dm, C::OMm) => todo!(), (C::Dm, C::Dm) => todo!(), (C::Dm, C::Jot) => todo!(), (C::Dm, C::Arr) => todo!(), (C::Dm, C::Ass) => todo!(),
+            (C::Jot, C::A) => todo!(), (C::Jot, C::AMf) => todo!(), (C::Jot, C::OMf) => todo!(), (C::Jot, C::Df) => todo!(), (C::Jot, C::N) => todo!(), (C::Jot, C::AMm) => todo!(), (C::Jot, C::OMm) => todo!(), (C::Jot, C::Dm) => todo!(), (C::Jot, C::Jot) => todo!(), (C::Jot, C::Arr) => todo!(), (C::Jot, C::Ass) => todo!(),
+            (C::Arr, C::A) => todo!(), (C::Arr, C::AMf) => todo!(), (C::Arr, C::OMf) => todo!(), (C::Arr, C::Df) => todo!(), (C::Arr, C::N) => todo!(), (C::Arr, C::AMm) => todo!(), (C::Arr, C::OMm) => todo!(), (C::Arr, C::Dm) => todo!(), (C::Arr, C::Jot) => todo!(), (C::Arr, C::Arr) => todo!(), (C::Arr, C::Ass) => todo!(),
+            (C::Ass, C::A) => todo!(), (C::Ass, C::AMf) => todo!(), (C::Ass, C::OMf) => todo!(), (C::Ass, C::Df) => todo!(), (C::Ass, C::N) => todo!(), (C::Ass, C::AMm) => todo!(), (C::Ass, C::OMm) => todo!(), (C::Ass, C::Dm) => todo!(), (C::Ass, C::Jot) => todo!(), (C::Ass, C::Arr) => todo!(), (C::Ass, C::Ass) => todo!(),
         }
     }
 }
@@ -81,7 +119,7 @@ impl ExprParseTree {
     }
     fn minimum_span(&self) -> Sp<Token> {
         match self {
-            ExprParseTree::Leaf { cat, t } => *t,
+            ExprParseTree::Leaf { cat, t } => t.clone(),
             ExprParseTree::AlphaMonadFnCall { alpha, fun } => todo!(),
             ExprParseTree::OmegaMonadFnCall { omega, fun } => todo!(),
             ExprParseTree::Assignment { name, val } => todo!(),

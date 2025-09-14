@@ -19,11 +19,11 @@ enum ShapeDescription {
 #[derive(Clone, Copy)]
 pub struct Sp<T> {
     /// In bytes
-    start: usize,
+    pub start: usize,
     /// In bytes also
-    end: usize,
+    pub end: usize,
     /// The actual thing
-    value: T,
+    pub value: T,
 }
 
 /// A word, directly as read in
