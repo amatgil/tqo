@@ -200,17 +200,17 @@ Table:
 | Left\Right | A        | αMF      | ⍵MF      | DF       | N        | αMM      | ⍵MM      | DM       | JOT      | ARR       |
 | /          | <        | <        | <        | <        | <        | <        | <        | <        | <        | <         |
 |------------+----------+----------+----------+----------+----------+----------+----------+----------+----------+-----------|
-| A          | _        | (x, A)   | _        | (x,⍵MF)  | _        | (x, A)   | _        | (x, ⍵MM) | (x ,A)   | (x, err)  |
+| A          | _        | (x, A)   | _        | (x,⍵MF)  | _        | (x, A)   | _        | (x, ⍵MM) | (x, A)   | (x, err)  |
 |------------+----------+----------+----------+----------+----------+----------+----------+----------+----------+-----------|
-| αMF        | _        | (x, αMF) | _        | (x, DF)  | _        | (x, αMF) | (x, err) | (x, ⍵MM) | err?     | (x, err)  |
+| αMF        | _        | (x, αMF) | _        | (x, DF)  | _        | (x, αMF) | _        | (x, ⍵MM) | err?     | (x, err)  |
 |------------+----------+----------+----------+----------+----------+----------+----------+----------+----------+-----------|
-| ⍵MF        | (x, A)   | _        | (x,⍵MF)  |          | (x, A)   | (x, αMF) |          |          |          | (x, err)  |
+| ⍵MF        | (x, A)   | _        | (x,⍵MF)  | (x, αMF) | (x, A)   | (x, αMF) | (x, err) | (x, err) | (x, ⍵MF) | (x, err)  |
 |------------+----------+----------+----------+----------+----------+----------+----------+----------+----------+-----------|
-| DF         | (x,MFα)  | _        | (x, DF)  | _        | (x, αMF) | (x, αMF) |          | (x, ⍵MM) |          | (x, err)  |
+| DF         | (x,MFα)  | _        | (x, DF)  | _        | (x, αMF) | (x, αMF) | (x, err) | (x, ⍵MM) |          | (x, err)  |
 |------------+----------+----------+----------+----------+----------+----------+----------+----------+----------+-----------|
 | N          | _        | (x, A)   | _        | (x, ⍵MF) | _        | (x, αMF) |          | (??)     |          | (x, bind) |
 |------------+----------+----------+----------+----------+----------+----------+----------+----------+----------+-----------|
-| αMM        | _        |          |          |          |          | (x, αMM) |          |          | err?     | (x, err)  |
+| αMM        | _        |          |          |          |          | (x, αMM) | _        |          | err?     | (x, err)  |
 |------------+----------+----------+----------+----------+----------+----------+----------+----------+----------+-----------|
 | ⍵MM        | ????     |          |          |          |          |          |          |          |          | (x, err)  |
 |------------+----------+----------+----------+----------+----------+----------+----------+----------+----------+-----------|
@@ -293,7 +293,7 @@ Note that all non-commutative dyadic operations have non-symemtrical glyphs! (Wi
 | ∉      | Logic      | Notmemberof      | Function | Dyadic  |                                            |
 | ∌      | Logic      | Notmemberin      | Function | Dyadic  |                                            |
 | ⌿      |            | Keep/Replicate   | Function | Dyadic  |                                            |
-| ≢      |            | Tally/Length     | Function | Monadic |                                            |
+| ≢      |            | Tally/Length     | Function | Monadic | Also used for type signatures (length)     |
 |        |            | Depth            | Function | Monadic |                                            |
 | ≍      |            | Match            | Function | Dyadic  |                                            |
 | ≭      |            | Notmatch         | Function | Dyadic  |                                            |
@@ -303,16 +303,20 @@ Note that all non-commutative dyadic operations have non-symemtrical glyphs! (Wi
 | ⍜      |            | Under            | Modifier | Dyadic  |                                            |
 | ⧋      |            | Evert            | Modifier | Monadic |                                            |
 | ⍣      |            | Repeat/Power     | Modifier | Dyadic  |                                            |
+| ⍤      |            | At Rank          |          |         | Also used for type signatures (rank)       |
 
 
 ** Special syntax glyphs
-| Glyph | Name            | Meaning                          |
-|-------+-----------------+----------------------------------|
-| :     | Type definition | Declare the type of an atom      |
-| ⊔     | Destructure     | Start pattern matching           |
-| ⊔     | Destructure     | Start pattern matching           |
-| ⋄     | Diamond         | Statment separator               |
-| ⎕     | Quad            | System function; Print to screen |
+| Glyph | Name             | Meaning                                    |
+|-------+------------------+--------------------------------------------|
+| :     | Type definition  | Declare the type of an atom                |
+| ⊔     | Destructure      | Start pattern matching                     |
+| ⊔     | Destructure      | Start pattern matching                     |
+| ⋄     | Diamond          | Statment separator                         |
+| ⎕     | Quad             | System function; Print to screen           |
+| »/«   | Input            |                                            |
+| ↳     | Output           |                                            |
+| ⍝     | (Inline) Comment | Signifies both starting and ending comment |
 
 # | ⧻     |            | Length           | Function | Monadic |                                |
 # | ≡     | Match            | Function | Dyadic  |                                |

@@ -1,6 +1,6 @@
 
-: '(1, Nat) » bfs
-              ↳ '(1, Nat)
+: '(⍤=1, Nat) » bfs
+              ↳ '(⍤=1, Nat)
 bfs ← {
   s ← ⍺≢↯∞ ⊡⍜0 0 ⍝ all distances are inf, start at 0
 

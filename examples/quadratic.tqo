@@ -1,0 +1,9 @@
+
+: (≢=3, F) » quad 
+          ↳ (≢=2, F)
+quad ← {
+  [a⋄b⋄c] ← ⍺
+
+  Disc ← b*2-(4×a×c)
+  ¯b+[Disc÷(2×a) ⋄ ¯Disc÷(2×a)]
+}
