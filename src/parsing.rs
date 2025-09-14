@@ -97,6 +97,8 @@ impl Category {
 
 type Tree = Box<ExprParseTree>;
 /// Used to parse expressions, not top-level elements
+/// TODO: Add Sp<Token> to each branch to be able to track the origin?
+/// Or, i think span should just be Sp, not Sp<T> <--- definitely this
 enum ExprParseTree {
     Leaf { cat: Category, t: Sp<Token> },
     AlphaMonadFnCall { alpha: Tree, fun: Tree },

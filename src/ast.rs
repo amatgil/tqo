@@ -27,7 +27,7 @@ pub struct Sp<T> {
 }
 
 impl<T> Sp<T> {
-    fn merge(&self, rhs: &Sp<T>, value: T) -> Sp<T> {
+    pub fn merge(&self, rhs: &Sp<T>, value: T) -> Sp<T> {
         Sp {
             start: self.start.min(rhs.start),
             end: self.start.max(rhs.start),
