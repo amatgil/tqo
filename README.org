@@ -302,7 +302,6 @@ Note that all non-commutative dyadic operations have non-symemtrical glyphs! (Wi
 | ⍣      |            | Repeat/Power     | Modifier | Dyadic  |                                            |
 | ⍤      |            | At Rank          |          |         | Also used for type signatures (rank)       |
 
-# TODO: if rho is shape, it can't be a greek letter for assignment. Do I limit nesting at ~5?
 
 ** Special syntax glyphs
 | Glyph | Name             | Meaning                                    |
