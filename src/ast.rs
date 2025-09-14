@@ -16,6 +16,7 @@ enum ShapeDescription {
     Axes(Vec<(Option<String>, Option<usize>)>), // We may know the size or name of each axis. Implies rank
 }
 
+#[derive(Clone, Copy)]
 pub struct Sp<T> {
     /// In bytes
     start: usize,

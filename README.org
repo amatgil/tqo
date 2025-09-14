@@ -20,7 +20,16 @@ This mainly manifests in the convention for functions becoming: input on the lef
 *** Naming things: considered good
 In a definition, each name may only refer to one thing (this avoids confusion with regard to "what does omega refer to in this scope?")
 
-To achieve this, instead of just alpha and omega (and their underscores for modifiers), more glyphs of the greek alphabet: each level of dfn nesting will add two more greek letters (from either side of the alphabet), such that alpha and omega always refer to the outermost arguments, beta and psi refer to the next level of nesting's arguments, etc.
+To achieve this, instead of just alpha and omega (and their underscores for modifiers), more glyphs of the lowercase greek alphabet are used: each level of dfn nesting will add two more greek letters (from either side of the alphabet), such that alpha and omega always refer to the outermost arguments, beta and psi refer to the next level of nesting's arguments, etc. Nesting of dfns is limited at 5, so the pairings are as follows:
+#+begin_src tqo
+  (α, ω)
+  (β, ψ)
+  (γ, χ)
+  (δ, φ)
+  (ε, υ)
+#+end_src
+
+(Note that other greek letters are used elsewhere, e.g. tau as the numeric constant and rho as =shape=).
 
 *** Strongly typed
 
@@ -305,6 +314,7 @@ Note that all non-commutative dyadic operations have non-symemtrical glyphs! (Wi
 | ⍣      |            | Repeat/Power     | Modifier | Dyadic  |                                            |
 | ⍤      |            | At Rank          |          |         | Also used for type signatures (rank)       |
 
+# TODO: if rho is shape, it can't be a greek letter for assignment. Do I limit nesting at ~5?
 
 ** Special syntax glyphs
 | Glyph | Name             | Meaning                                    |
