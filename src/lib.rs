@@ -1,5 +1,18 @@
 use std::{collections::HashMap, convert::Infallible, default};
 mod ast;
+mod function;
+mod parsing;
+mod primitive;
+
+struct TError {
+    /// In bytes
+    span: (usize, usize),
+    kind: TErrorKind,
+}
+
+enum TErrorKind {}
+
+type TResult<T> = Result<T, TError>;
 
 enum Side {
     Left,
@@ -69,17 +82,17 @@ enum TNoun {
     Array(TArray),
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
-enum TVerb {
-    FnMonadic(TFnMonadic),
-    FnDyadic(TFnDyadic),
-}
-
-#[derive(Clone, Debug, PartialEq, Eq)]
-enum TAdverb {
-    ModMonadic(TModMonadic),
-    ModDyadic(TModDyadic),
-}
+//#[derive(Clone, Debug, PartialEq, Eq)]
+//enum TVerb {
+//    FnMonadic(TFnMonadic),
+//    FnDyadic(TFnDyadic),
+//}
+//
+//#[derive(Clone, Debug, PartialEq, Eq)]
+//enum TAdverb {
+//    ModMonadic(TModMonadic),
+//    ModDyadic(TModDyadic),
+//}
 
 #[derive(Clone, Debug)]
 struct TEnv(HashMap<Ident, TNoun>);
@@ -122,17 +135,19 @@ enum Primitive {
 fn bunda_gerth_binding_powers() {
     // See README.md/Bunda-Gerth for the actual table
     let tbd = None; // for now!
+    #[rustfmt::skip]
     let table: [[Option<u8>; 10]; 10] = [
-        /*A*/ [None, tbd, None, tbd, None, tbd, tbd, tbd, tbd, tbd],
-        /*αMF*/ [None, tbd, None, tbd, None, tbd, tbd, tbd, tbd, tbd],
-        /*⍵MF*/ [tbd, None, tbd, None, tbd, tbd, None, None, None, tbd],
-        /*DF*/ [tbd, None, tbd, None, tbd, tbd, None, None, None, tbd],
-        /*N*/ [None, tbd, None, tbd, None, tbd, tbd, tbd, tbd, tbd],
-        /*αMM*/ [None, tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd],
-        /*⍵MM*/ [tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd],
-        /*DM*/ [tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd],
-        /*JOT*/ [tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd],
-        /*ARR*/ [tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd, tbd],
+              /* A     αMF   ⍵MF   DF    N     αMM  ⍵MM   DM    JOT   ARR */
+        /*A*/   [None, tbd,  None, tbd,  None, tbd, tbd,  tbd,  tbd,  tbd],
+        /*αMF*/ [None, tbd,  None, tbd,  None, tbd, tbd,  tbd,  tbd,  tbd],
+        /*⍵MF*/ [tbd,  None, tbd,  None, tbd,  tbd, None, None, None, tbd],
+        /*DF*/  [tbd,  None, tbd,  None, tbd,  tbd, None, None, None, tbd],
+        /*N*/   [None, tbd,  None, tbd,  None, tbd, tbd,  tbd,  tbd,  tbd],
+        /*αMM*/ [None, tbd,  tbd,  tbd,  tbd,  tbd, tbd,  tbd,  tbd,  tbd],
+        /*⍵MM*/ [tbd,  tbd,  tbd,  tbd,  tbd,  tbd, tbd,  tbd,  tbd,  tbd],
+        /*DM*/  [tbd,  tbd,  tbd,  tbd,  tbd,  tbd, tbd,  tbd,  tbd,  tbd],
+        /*JOT*/ [tbd,  tbd,  tbd,  tbd,  tbd,  tbd, tbd,  tbd,  tbd,  tbd],
+        /*ARR*/ [tbd,  tbd,  tbd,  tbd,  tbd,  tbd, tbd,  tbd,  tbd,  tbd],
     ];
 
     // This is ordered
