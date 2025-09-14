@@ -297,23 +297,23 @@ Note that all non-commutative dyadic operations have non-symemtrical glyphs! (Wi
 | ⍴      |            | Shape            | Function | Monadic |                                            |
 | ↯      |            | Reshape          | Function | Dyadic  |                                            |
 | ⊞      |            | Table            | Modifier | Monadic |                                            |
-| ⍜      |            | Under            | Modifier | Dyadic  |                                            |
 | ⧋      |            | Evert            | Modifier | Monadic |                                            |
+| ⍜      |            | Under            | Modifier | Dyadic  |                                            |
 | ⍣      |            | Repeat/Power     | Modifier | Dyadic  |                                            |
-| ⍤      |            | At Rank          |          |         | Also used for type signatures (rank)       |
+| ⍤      |            | At Rank          | Modifier | Dyadic  | Also used for type signatures (rank)       |
 
 
 ** Special syntax glyphs
-| Glyph | Name             | Meaning                                    |
-|-------+------------------+--------------------------------------------|
-| :     | Type definition  | Declare the type of an atom                |
-| ⊔     | Destructure      | Start pattern matching                     |
-| ⊔     | Destructure      | Start pattern matching                     |
-| ⋄     | Diamond          | Statment separator                         |
-| ⎕     | Quad             | System function; Print to screen           |
-| »/«   | Input            |                                            |
-| ↳     | Output           |                                            |
-| ⍝     | (Inline) Comment | Signifies both starting and ending comment |
+| Glyph | Name              | Meaning                                                  |
+|-------+-------------------+----------------------------------------------------------|
+| :     | Type definition   | Declare the type of an atom                              |
+| ⊔     | Destructure       | Start pattern matching                                   |
+| ⊔     | Destructure       | Start pattern matching                                   |
+| ⋄     | Diamond           | Statment separator                                       |
+| ⎕     | Quad              | System function marker; Output stand-in when assigned to |
+| »/«   | Input             |                                                          |
+| ↳     | Output            |                                                          |
+| ⍝     | (Inline*) Comment | Signifies both starting and ending comment               |
 
 # | ⧻     |            | Length           | Function | Monadic |                                |
 # | ≡     | Match            | Function | Dyadic  |                                |
