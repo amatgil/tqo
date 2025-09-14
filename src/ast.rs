@@ -26,6 +26,16 @@ pub struct Sp<T> {
     pub value: T,
 }
 
+impl<T> Sp<T> {
+    fn merge(&self, rhs: &Sp<T>, value: T) -> Sp<T> {
+        Sp {
+            start: self.start.min(rhs.start),
+            end: self.start.max(rhs.start),
+            value,
+        }
+    }
+}
+
 /// A word, directly as read in
 pub enum Word {
     // Nat -> Int -> Float
