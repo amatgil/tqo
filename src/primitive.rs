@@ -1,19 +1,19 @@
 mod arithmetic {
     use crate::*;
 
-    fn negate(a: TArray) -> TResult<TArray> {
+    fn negate<'src>(a: TArray) -> TResult<'src, TArray> {
         todo!()
     }
-    fn plus(a: TArray, b: TArray) -> TResult<TArray> {
+    fn plus<'src>(a: TArray, b: TArray) -> TResult<'src, TArray> {
         todo!()
     }
-    fn minus(a: TArray, b: TArray) -> TResult<TArray> {
+    fn minus<'src>(a: TArray, b: TArray) -> TResult<'src, TArray> {
         todo!()
     }
-    fn times(a: TArray, b: TArray) -> TResult<TArray> {
+    fn times<'src>(a: TArray, b: TArray) -> TResult<'src, TArray> {
         todo!()
     }
-    fn divide(a: TArray, b: TArray) -> TResult<TArray> {
+    fn divide<'src>(a: TArray, b: TArray) -> TResult<'src, TArray> {
         todo!()
     }
 }

@@ -3,75 +3,74 @@
 
 use crate::{ast::Sp, *};
 
-#[derive(Clone, PartialEq, Eq)]
-pub struct Token<'src> {
-    kind: TokenKind<'src>,
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ExprToken<'src> {
+    kind: ExprTokenKind<'src>,
     span: Sp<'src>,
 }
-#[derive(Clone, PartialEq, Eq)]
-pub enum TokenKind<'src> {
+#[rustfmt::skip]
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ExprTokenKind<'src> {
     Number,
     String,
     Char,
-    PrimArray,
-    PrimAVerb,
-    PrimOVerb,
-    PrimAAdverb,
-    PrimOAdverb,
-    ArrayName,
-    AVerbName,
-    OVerbName,
+    PrimArray,   ArrayName,
+    PrimAVerb,   PrimOVerb,   PrimDVerb,
+    PrimAAdverb, PrimOAdverb, PrimDAdverb,
+    AVerbName,   OVerbName,   DVerbName,
     // AAdverbName,  <-- CANNOT EXIST! There's no way to construct a primitive of this kind
-    OAdverbName,
-    ArrayAssign,
-    VerbAssign,
-    AdverbAssign,
-    Parenthesized(Vec<Token<'src>>),
+    OAdverbName, DAdverbName,
+    ArrayAssign, VerbAssign,  AdverbAssign,
+    Parenthesized(Vec<ExprToken<'src>>),
 }
 
-impl<'src> Token<'src> {
-    fn to_tree(t: Token) -> Tree {
+impl<'src> ExprToken<'src> {
+    fn to_tree(t: ExprToken) -> Tree {
         let leaf = |cat| Box::new(ExprParseTree::Leaf { cat, t: t.clone() });
 
         match t.kind {
-            TokenKind::Number => leaf(Category::A),
-            TokenKind::String => leaf(Category::A),
-            TokenKind::Char => leaf(Category::A),
-            TokenKind::PrimArray => leaf(Category::A),
-            TokenKind::PrimAVerb => leaf(Category::AMf),
-            TokenKind::PrimOVerb => leaf(Category::OMf),
-            TokenKind::PrimAAdverb => leaf(Category::AMm),
-            TokenKind::PrimOAdverb => leaf(Category::OMm),
-            TokenKind::ArrayName => leaf(Category::N),
-            TokenKind::AVerbName => leaf(Category::AMf),
-            TokenKind::OVerbName => leaf(Category::AMf),
-            TokenKind::OAdverbName => leaf(Category::OMm),
-            TokenKind::ArrayAssign => leaf(Category::Ass),
-            TokenKind::VerbAssign => leaf(Category::Ass),
-            TokenKind::AdverbAssign => leaf(Category::Ass),
-            TokenKind::Parenthesized(tokens) => todo!(),
+            ExprTokenKind::Number => leaf(Category::A),
+            ExprTokenKind::String => leaf(Category::A),
+            ExprTokenKind::Char => leaf(Category::A),
+            ExprTokenKind::PrimArray => leaf(Category::A),
+            ExprTokenKind::PrimAVerb => leaf(Category::Av),
+            ExprTokenKind::PrimOVerb => leaf(Category::Ov),
+            ExprTokenKind::PrimDVerb => leaf(Category::Dv),
+            ExprTokenKind::PrimDAdverb => leaf(Category::Da),
+            ExprTokenKind::PrimAAdverb => leaf(Category::Aa),
+            ExprTokenKind::PrimOAdverb => leaf(Category::Oa),
+            ExprTokenKind::ArrayName => leaf(Category::N),
+            ExprTokenKind::AVerbName => leaf(Category::Av),
+            ExprTokenKind::OVerbName => leaf(Category::Av),
+            ExprTokenKind::OAdverbName => leaf(Category::Oa),
+            ExprTokenKind::ArrayAssign => leaf(Category::Ass),
+            ExprTokenKind::VerbAssign => leaf(Category::Ass),
+            ExprTokenKind::AdverbAssign => leaf(Category::Ass),
+            ExprTokenKind::DVerbName => leaf(Category::Dv),
+            ExprTokenKind::DAdverbName => leaf(Category::Da),
+            ExprTokenKind::Parenthesized(tokens) => todo!(),
         }
     }
 }
 
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum Category {
     /// Array
     A,
-    /// Alpha-monadic function
-    AMf,
-    /// Omega-monadic function
-    OMf,
+    /// Alpha-monadic verb
+    Av,
+    /// Omega-monadic verb
+    Ov,
     /// Dyadic function
-    Df,
+    Dv,
     /// Some name/identifier
     N,
-    /// Alpha-monadic modifier
-    AMm,
-    /// Omega-monadic modifier
-    OMm,
-    /// Dyadic modifier
-    Dm,
+    /// Alpha-monadic adverb
+    Aa,
+    /// Omega-monadic adverb
+    Oa,
+    /// Dyadic adverb
+    Da,
     /// ...should this be here?
     Jot,
     /// Arrow
@@ -85,17 +84,34 @@ impl Category {
     fn binding_power_of<'a>(a: &Self, b: &Self) -> Option<(u8, ExprParseTree<'a>)> {
         use Category as C;
         match (a, b) {
-            (C::A, C::A) => todo!(), (C::A, C::AMf) => todo!(), (C::A, C::OMf) => todo!(), (C::A, C::Df) => todo!(), (C::A, C::N) => todo!(), (C::A, C::AMm) => todo!(), (C::A, C::OMm) => todo!(), (C::A, C::Dm) => todo!(), (C::A, C::Jot) => todo!(), (C::A, C::Arr) => todo!(), (C::A, C::Ass) => todo!(),
-            (C::AMf, C::A) => todo!(), (C::AMf, C::AMf) => todo!(), (C::AMf, C::OMf) => todo!(), (C::AMf, C::Df) => todo!(), (C::AMf, C::N) => todo!(), (C::AMf, C::AMm) => todo!(), (C::AMf, C::OMm) => todo!(), (C::AMf, C::Dm) => todo!(), (C::AMf, C::Jot) => todo!(), (C::AMf, C::Arr) => todo!(), (C::AMf, C::Ass) => todo!(),
-            (C::OMf, C::A) => todo!(), (C::OMf, C::AMf) => todo!(), (C::OMf, C::OMf) => todo!(), (C::OMf, C::Df) => todo!(), (C::OMf, C::N) => todo!(), (C::OMf, C::AMm) => todo!(), (C::OMf, C::OMm) => todo!(), (C::OMf, C::Dm) => todo!(), (C::OMf, C::Jot) => todo!(), (C::OMf, C::Arr) => todo!(), (C::OMf, C::Ass) => todo!(),
-            (C::Df, C::A) => todo!(), (C::Df, C::AMf) => todo!(), (C::Df, C::OMf) => todo!(), (C::Df, C::Df) => todo!(), (C::Df, C::N) => todo!(), (C::Df, C::AMm) => todo!(), (C::Df, C::OMm) => todo!(), (C::Df, C::Dm) => todo!(), (C::Df, C::Jot) => todo!(), (C::Df, C::Arr) => todo!(), (C::Df, C::Ass) => todo!(),
-            (C::N, C::A) => todo!(), (C::N, C::AMf) => todo!(), (C::N, C::OMf) => todo!(), (C::N, C::Df) => todo!(), (C::N, C::N) => todo!(), (C::N, C::AMm) => todo!(), (C::N, C::OMm) => todo!(), (C::N, C::Dm) => todo!(), (C::N, C::Jot) => todo!(), (C::N, C::Arr) => todo!(), (C::N, C::Ass) => todo!(),
-            (C::AMm, C::A) => todo!(), (C::AMm, C::AMf) => todo!(), (C::AMm, C::OMf) => todo!(), (C::AMm, C::Df) => todo!(), (C::AMm, C::N) => todo!(), (C::AMm, C::AMm) => todo!(), (C::AMm, C::OMm) => todo!(), (C::AMm, C::Dm) => todo!(), (C::AMm, C::Jot) => todo!(), (C::AMm, C::Arr) => todo!(), (C::AMm, C::Ass) => todo!(),
-            (C::OMm, C::A) => todo!(), (C::OMm, C::AMf) => todo!(), (C::OMm, C::OMf) => todo!(), (C::OMm, C::Df) => todo!(), (C::OMm, C::N) => todo!(), (C::OMm, C::AMm) => todo!(), (C::OMm, C::OMm) => todo!(), (C::OMm, C::Dm) => todo!(), (C::OMm, C::Jot) => todo!(), (C::OMm, C::Arr) => todo!(), (C::OMm, C::Ass) => todo!(),
-            (C::Dm, C::A) => todo!(), (C::Dm, C::AMf) => todo!(), (C::Dm, C::OMf) => todo!(), (C::Dm, C::Df) => todo!(), (C::Dm, C::N) => todo!(), (C::Dm, C::AMm) => todo!(), (C::Dm, C::OMm) => todo!(), (C::Dm, C::Dm) => todo!(), (C::Dm, C::Jot) => todo!(), (C::Dm, C::Arr) => todo!(), (C::Dm, C::Ass) => todo!(),
-            (C::Jot, C::A) => todo!(), (C::Jot, C::AMf) => todo!(), (C::Jot, C::OMf) => todo!(), (C::Jot, C::Df) => todo!(), (C::Jot, C::N) => todo!(), (C::Jot, C::AMm) => todo!(), (C::Jot, C::OMm) => todo!(), (C::Jot, C::Dm) => todo!(), (C::Jot, C::Jot) => todo!(), (C::Jot, C::Arr) => todo!(), (C::Jot, C::Ass) => todo!(),
-            (C::Arr, C::A) => todo!(), (C::Arr, C::AMf) => todo!(), (C::Arr, C::OMf) => todo!(), (C::Arr, C::Df) => todo!(), (C::Arr, C::N) => todo!(), (C::Arr, C::AMm) => todo!(), (C::Arr, C::OMm) => todo!(), (C::Arr, C::Dm) => todo!(), (C::Arr, C::Jot) => todo!(), (C::Arr, C::Arr) => todo!(), (C::Arr, C::Ass) => todo!(),
-            (C::Ass, C::A) => todo!(), (C::Ass, C::AMf) => todo!(), (C::Ass, C::OMf) => todo!(), (C::Ass, C::Df) => todo!(), (C::Ass, C::N) => todo!(), (C::Ass, C::AMm) => todo!(), (C::Ass, C::OMm) => todo!(), (C::Ass, C::Dm) => todo!(), (C::Ass, C::Jot) => todo!(), (C::Ass, C::Arr) => todo!(), (C::Ass, C::Ass) => todo!(),
+            (C::A, C::A) => todo!(), (C::A, C::Av) => todo!(), (C::A, C::Ov) => todo!(), (C::A, C::Dv) => todo!(), (C::A, C::N) => todo!(), (C::A, C::Aa) => todo!(), (C::A, C::Oa) => todo!(), (C::A, C::Da) => todo!(), (C::A, C::Jot) => todo!(), (C::A, C::Arr) => todo!(), (C::A, C::Ass) => todo!(),
+            (C::Av, C::A) => todo!(), (C::Av, C::Av) => todo!(), (C::Av, C::Ov) => todo!(), (C::Av, C::Dv) => todo!(), (C::Av, C::N) => todo!(), (C::Av, C::Aa) => todo!(), (C::Av, C::Oa) => todo!(), (C::Av, C::Da) => todo!(), (C::Av, C::Jot) => todo!(), (C::Av, C::Arr) => todo!(), (C::Av, C::Ass) => todo!(),
+            (C::Ov, C::A) => todo!(), (C::Ov, C::Av) => todo!(), (C::Ov, C::Ov) => todo!(), (C::Ov, C::Dv) => todo!(), (C::Ov, C::N) => todo!(), (C::Ov, C::Aa) => todo!(), (C::Ov, C::Oa) => todo!(), (C::Ov, C::Da) => todo!(), (C::Ov, C::Jot) => todo!(), (C::Ov, C::Arr) => todo!(), (C::Ov, C::Ass) => todo!(),
+            (C::Dv, C::A) => todo!(), (C::Dv, C::Av) => todo!(), (C::Dv, C::Ov) => todo!(), (C::Dv, C::Dv) => todo!(), (C::Dv, C::N) => todo!(), (C::Dv, C::Aa) => todo!(), (C::Dv, C::Oa) => todo!(), (C::Dv, C::Da) => todo!(), (C::Dv, C::Jot) => todo!(), (C::Dv, C::Arr) => todo!(), (C::Dv, C::Ass) => todo!(),
+            (C::N, C::A) => todo!(), (C::N, C::Av) => todo!(), (C::N, C::Ov) => todo!(), (C::N, C::Dv) => todo!(), (C::N, C::N) => todo!(), (C::N, C::Aa) => todo!(), (C::N, C::Oa) => todo!(), (C::N, C::Da) => todo!(), (C::N, C::Jot) => todo!(), (C::N, C::Arr) => todo!(), (C::N, C::Ass) => todo!(),
+            (C::Aa, C::A) => todo!(), (C::Aa, C::Av) => todo!(), (C::Aa, C::Ov) => todo!(), (C::Aa, C::Dv) => todo!(), (C::Aa, C::N) => todo!(), (C::Aa, C::Aa) => todo!(), (C::Aa, C::Oa) => todo!(), (C::Aa, C::Da) => todo!(), (C::Aa, C::Jot) => todo!(), (C::Aa, C::Arr) => todo!(), (C::Aa, C::Ass) => todo!(),
+            (C::Oa, C::A) => todo!(), (C::Oa, C::Av) => todo!(), (C::Oa, C::Ov) => todo!(), (C::Oa, C::Dv) => todo!(), (C::Oa, C::N) => todo!(), (C::Oa, C::Aa) => todo!(), (C::Oa, C::Oa) => todo!(), (C::Oa, C::Da) => todo!(), (C::Oa, C::Jot) => todo!(), (C::Oa, C::Arr) => todo!(), (C::Oa, C::Ass) => todo!(),
+            (C::Da, C::A) => todo!(), (C::Da, C::Av) => todo!(), (C::Da, C::Ov) => todo!(), (C::Da, C::Dv) => todo!(), (C::Da, C::N) => todo!(), (C::Da, C::Aa) => todo!(), (C::Da, C::Oa) => todo!(), (C::Da, C::Da) => todo!(), (C::Da, C::Jot) => todo!(), (C::Da, C::Arr) => todo!(), (C::Da, C::Ass) => todo!(),
+            (C::Jot, C::A) => todo!(), (C::Jot, C::Av) => todo!(), (C::Jot, C::Ov) => todo!(), (C::Jot, C::Dv) => todo!(), (C::Jot, C::N) => todo!(), (C::Jot, C::Aa) => todo!(), (C::Jot, C::Oa) => todo!(), (C::Jot, C::Da) => todo!(), (C::Jot, C::Jot) => todo!(), (C::Jot, C::Arr) => todo!(), (C::Jot, C::Ass) => todo!(),
+            (C::Arr, C::A) => todo!(), (C::Arr, C::Av) => todo!(), (C::Arr, C::Ov) => todo!(), (C::Arr, C::Dv) => todo!(), (C::Arr, C::N) => todo!(), (C::Arr, C::Aa) => todo!(), (C::Arr, C::Oa) => todo!(), (C::Arr, C::Da) => todo!(), (C::Arr, C::Jot) => todo!(), (C::Arr, C::Arr) => todo!(), (C::Arr, C::Ass) => todo!(),
+            (C::Ass, C::A) => todo!(), (C::Ass, C::Av) => todo!(), (C::Ass, C::Ov) => todo!(), (C::Ass, C::Dv) => todo!(), (C::Ass, C::N) => todo!(), (C::Ass, C::Aa) => todo!(), (C::Ass, C::Oa) => todo!(), (C::Ass, C::Da) => todo!(), (C::Ass, C::Jot) => todo!(), (C::Ass, C::Arr) => todo!(), (C::Ass, C::Ass) => todo!(),
+        }
+    }
+    #[rustfmt::skip]
+    fn binding_power_of_inside_train<'a>(a: &Self, b: &Self) -> Option<(u8, ExprParseTree<'a>)> {
+        use Category as C;
+        match (a, b) {
+            (C::A, C::A) => todo!(), (C::A, C::Av) => todo!(), (C::A, C::Ov) => todo!(), (C::A, C::Dv) => todo!(), (C::A, C::N) => todo!(), (C::A, C::Aa) => todo!(), (C::A, C::Oa) => todo!(), (C::A, C::Da) => todo!(), (C::A, C::Jot) => todo!(), (C::A, C::Arr) => todo!(), (C::A, C::Ass) => todo!(),
+            (C::Av, C::A) => todo!(), (C::Av, C::Av) => todo!(), (C::Av, C::Ov) => todo!(), (C::Av, C::Dv) => todo!(), (C::Av, C::N) => todo!(), (C::Av, C::Aa) => todo!(), (C::Av, C::Oa) => todo!(), (C::Av, C::Da) => todo!(), (C::Av, C::Jot) => todo!(), (C::Av, C::Arr) => todo!(), (C::Av, C::Ass) => todo!(),
+            (C::Ov, C::A) => todo!(), (C::Ov, C::Av) => todo!(), (C::Ov, C::Ov) => todo!(), (C::Ov, C::Dv) => todo!(), (C::Ov, C::N) => todo!(), (C::Ov, C::Aa) => todo!(), (C::Ov, C::Oa) => todo!(), (C::Ov, C::Da) => todo!(), (C::Ov, C::Jot) => todo!(), (C::Ov, C::Arr) => todo!(), (C::Ov, C::Ass) => todo!(),
+            (C::Dv, C::A) => todo!(), (C::Dv, C::Av) => todo!(), (C::Dv, C::Ov) => todo!(), (C::Dv, C::Dv) => todo!(), (C::Dv, C::N) => todo!(), (C::Dv, C::Aa) => todo!(), (C::Dv, C::Oa) => todo!(), (C::Dv, C::Da) => todo!(), (C::Dv, C::Jot) => todo!(), (C::Dv, C::Arr) => todo!(), (C::Dv, C::Ass) => todo!(),
+            (C::N, C::A) => todo!(), (C::N, C::Av) => todo!(), (C::N, C::Ov) => todo!(), (C::N, C::Dv) => todo!(), (C::N, C::N) => todo!(), (C::N, C::Aa) => todo!(), (C::N, C::Oa) => todo!(), (C::N, C::Da) => todo!(), (C::N, C::Jot) => todo!(), (C::N, C::Arr) => todo!(), (C::N, C::Ass) => todo!(),
+            (C::Aa, C::A) => todo!(), (C::Aa, C::Av) => todo!(), (C::Aa, C::Ov) => todo!(), (C::Aa, C::Dv) => todo!(), (C::Aa, C::N) => todo!(), (C::Aa, C::Aa) => todo!(), (C::Aa, C::Oa) => todo!(), (C::Aa, C::Da) => todo!(), (C::Aa, C::Jot) => todo!(), (C::Aa, C::Arr) => todo!(), (C::Aa, C::Ass) => todo!(),
+            (C::Oa, C::A) => todo!(), (C::Oa, C::Av) => todo!(), (C::Oa, C::Ov) => todo!(), (C::Oa, C::Dv) => todo!(), (C::Oa, C::N) => todo!(), (C::Oa, C::Aa) => todo!(), (C::Oa, C::Oa) => todo!(), (C::Oa, C::Da) => todo!(), (C::Oa, C::Jot) => todo!(), (C::Oa, C::Arr) => todo!(), (C::Oa, C::Ass) => todo!(),
+            (C::Da, C::A) => todo!(), (C::Da, C::Av) => todo!(), (C::Da, C::Ov) => todo!(), (C::Da, C::Dv) => todo!(), (C::Da, C::N) => todo!(), (C::Da, C::Aa) => todo!(), (C::Da, C::Oa) => todo!(), (C::Da, C::Da) => todo!(), (C::Da, C::Jot) => todo!(), (C::Da, C::Arr) => todo!(), (C::Da, C::Ass) => todo!(),
+            (C::Jot, C::A) => todo!(), (C::Jot, C::Av) => todo!(), (C::Jot, C::Ov) => todo!(), (C::Jot, C::Dv) => todo!(), (C::Jot, C::N) => todo!(), (C::Jot, C::Aa) => todo!(), (C::Jot, C::Oa) => todo!(), (C::Jot, C::Da) => todo!(), (C::Jot, C::Jot) => todo!(), (C::Jot, C::Arr) => todo!(), (C::Jot, C::Ass) => todo!(),
+            (C::Arr, C::A) => todo!(), (C::Arr, C::Av) => todo!(), (C::Arr, C::Ov) => todo!(), (C::Arr, C::Dv) => todo!(), (C::Arr, C::N) => todo!(), (C::Arr, C::Aa) => todo!(), (C::Arr, C::Oa) => todo!(), (C::Arr, C::Da) => todo!(), (C::Arr, C::Jot) => todo!(), (C::Arr, C::Arr) => todo!(), (C::Arr, C::Ass) => todo!(),
+            (C::Ass, C::A) => todo!(), (C::Ass, C::Av) => todo!(), (C::Ass, C::Ov) => todo!(), (C::Ass, C::Dv) => todo!(), (C::Ass, C::N) => todo!(), (C::Ass, C::Aa) => todo!(), (C::Ass, C::Oa) => todo!(), (C::Ass, C::Da) => todo!(), (C::Ass, C::Jot) => todo!(), (C::Ass, C::Arr) => todo!(), (C::Ass, C::Ass) => todo!(),
         }
     }
 }
@@ -104,34 +120,71 @@ type Tree<'src> = Box<ExprParseTree<'src>>;
 /// Used to parse expressions, not top-level elements
 /// TODO: Add Sp<Token> to each branch to be able to track the origin?
 /// Or, i think span should just be Sp, not Sp<T> <--- definitely this
+#[derive(Debug, Clone, PartialEq, Eq)]
 enum ExprParseTree<'src> {
-    Leaf { cat: Category, t: Token<'src> },
-    AlphaMonadFnCall { alpha: Tree<'src>, fun: Tree<'src> },
-    OmegaMonadFnCall { omega: Tree<'src>, fun: Tree<'src> },
-    Assignment { name: String, val: Tree<'src> },
-    AlphaModifierCall { alpha: Tree<'src>, fun: Tree<'src> },
-    OmegaModifierCall { omega: Tree<'src>, fun: Tree<'src> },
+    Leaf {
+        cat: Category,
+        t: ExprToken<'src>,
+    },
+    AlphaVerbCall {
+        verb: Tree<'src>,
+        alpha: Tree<'src>,
+    },
+    OmegaVerbCall {
+        verb: Tree<'src>,
+        omega: Tree<'src>,
+    },
+    DyadicVerbCall {
+        verb: Tree<'src>,
+        alpha: Tree<'src>,
+        omega: Tree<'src>,
+    },
+    Assignment {
+        name: String,
+        val: Tree<'src>,
+    },
+    AlphaAdverbCall {
+        adverb: Tree<'src>,
+        alpha: Tree<'src>,
+    },
+    OmegaAdverbCall {
+        adverb: Tree<'src>,
+        omega: Tree<'src>,
+    },
+    DyadicAdverbCall {
+        adverb: Tree<'src>,
+        alpha: Tree<'src>,
+        omega: Tree<'src>,
+    },
 }
 
 impl<'src> ExprParseTree<'src> {
     fn category(&self) -> Category {
         match self {
             ExprParseTree::Leaf { cat, t } => *cat,
-            ExprParseTree::AlphaMonadFnCall { .. } => Category::AMf,
-            ExprParseTree::OmegaMonadFnCall { .. } => Category::OMf,
+            ExprParseTree::AlphaVerbCall { .. } => Category::Av,
+            ExprParseTree::OmegaVerbCall { .. } => Category::Ov,
             ExprParseTree::Assignment { .. } => Category::Ass,
-            ExprParseTree::AlphaModifierCall { .. } => Category::AMm,
-            ExprParseTree::OmegaModifierCall { .. } => Category::OMm,
+            ExprParseTree::AlphaAdverbCall { .. } => Category::Aa,
+            ExprParseTree::OmegaAdverbCall { .. } => Category::Oa,
+            ExprParseTree::DyadicVerbCall { .. } => Category::Dv,
+            ExprParseTree::DyadicAdverbCall { .. } => Category::Da,
         }
     }
-    fn minimum_span(&self) -> Token {
+    fn minimum_span(&self) -> ExprToken {
         match self {
             ExprParseTree::Leaf { cat, t } => t.clone(),
-            ExprParseTree::AlphaMonadFnCall { alpha, fun } => todo!(),
-            ExprParseTree::OmegaMonadFnCall { omega, fun } => todo!(),
+            ExprParseTree::AlphaVerbCall { verb, alpha } => todo!(),
+            ExprParseTree::OmegaVerbCall { verb, omega } => todo!(),
             ExprParseTree::Assignment { name, val } => todo!(),
-            ExprParseTree::AlphaModifierCall { alpha, fun } => todo!(),
-            ExprParseTree::OmegaModifierCall { omega, fun } => todo!(),
+            ExprParseTree::AlphaAdverbCall { adverb, alpha } => todo!(),
+            ExprParseTree::OmegaAdverbCall { adverb, omega } => todo!(),
+            ExprParseTree::DyadicVerbCall { verb, alpha, omega } => todo!(),
+            ExprParseTree::DyadicAdverbCall {
+                adverb,
+                alpha,
+                omega,
+            } => todo!(),
         }
     }
     fn pairs(trees: &[Self]) -> Vec<(u8, ExprParseTree)> {
@@ -146,12 +199,56 @@ impl<'src> ExprParseTree<'src> {
     }
 }
 
+pub fn parse_expr<'src>(ts: &'src [ExprToken]) -> TResult<'src, ExprParseTree<'src>> {
+    if ts.is_empty() {
+        return Err(TError::new(TErrorKind::EmptyExpr, Sp::new(0, 0)));
+    }
+    todo!()
+}
+
 #[test]
 fn babys_first_parsing() {
-    let input = vec![Token {
-        kind: TokenKind::Number,
-        span: Sp { start: 0, end: 1 },
-    }];
+    let _source = "1+2"; // We do not test the lexer here
+    let ts = vec![
+        ExprToken {
+            kind: ExprTokenKind::Number,
+            span: Sp::new(0, 1),
+        },
+        ExprToken {
+            kind: ExprTokenKind::PrimDVerb,
+            span: Sp::new(1, 2),
+        },
+        ExprToken {
+            kind: ExprTokenKind::Number,
+            span: Sp::new(2, 3),
+        },
+    ];
+
+    let expr = parse_expr(&ts).unwrap();
+    let expected = ExprParseTree::DyadicVerbCall {
+        verb: Box::new(ExprParseTree::Leaf {
+            cat: Category::Dv,
+            t: ExprToken {
+                kind: ExprTokenKind::PrimDVerb,
+                span: Sp::new(0, 1),
+            },
+        }),
+        alpha: Box::new(ExprParseTree::Leaf {
+            cat: Category::A,
+            t: ExprToken {
+                kind: ExprTokenKind::Number,
+                span: Sp::new(0, 1),
+            },
+        }),
+        omega: Box::new(ExprParseTree::Leaf {
+            cat: Category::A,
+            t: ExprToken {
+                kind: ExprTokenKind::Number,
+                span: Sp::new(0, 1),
+            },
+        }),
+    };
+    assert_eq!(expr, expected);
 }
 
 #[test]
@@ -176,9 +273,9 @@ fn bunda_gerth_binding_powers() {
     use Category::*;
 
     let gt_conditions = [
-        ((AMf, Dm), (Dm, Df)),
-        ((Df, Dm), (Dm, Df)),
-        ((Df, Jot), (Dm, Df)),
+        ((Av, Da), (Da, Dv)),
+        ((Dv, Da), (Da, Dv)),
+        ((Dv, Jot), (Da, Dv)),
     ];
 
     for (lesser, greater) in gt_conditions {

@@ -1,18 +1,29 @@
 use std::{collections::HashMap, convert::Infallible, default};
+
+use ast::Sp;
 mod ast;
 mod function;
 mod parsing;
 mod primitive;
 
-struct TError {
-    /// In bytes
-    span: (usize, usize),
+#[derive(Debug, Clone, Copy)]
+struct TError<'src> {
+    span: Sp<'src>,
     kind: TErrorKind,
 }
 
-enum TErrorKind {}
+impl<'src> TError<'src> {
+    pub fn new(kind: TErrorKind, span: Sp<'src>) -> Self {
+        Self { span, kind }
+    }
+}
 
-type TResult<T> = Result<T, TError>;
+#[derive(Debug, Clone, Copy)]
+enum TErrorKind {
+    EmptyExpr,
+}
+
+type TResult<'src, T> = Result<T, TError<'src>>;
 
 enum Side {
     Left,
