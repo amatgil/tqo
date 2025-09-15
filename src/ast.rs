@@ -1,4 +1,4 @@
-use std::convert::Infallible;
+use std::{convert::Infallible, marker::PhantomData};
 
 use crate::{Ident, Primitive, TAtomKind};
 
@@ -11,28 +11,32 @@ struct TypeAnnotation {
     shape: ShapeDescription,                // And the shape
 }
 
+/// TODO: Indicate properly, as a struct, that we may know rank and length and such
 enum ShapeDescription {
     Rank(usize),                                // We know the number of axis
     Axes(Vec<(Option<String>, Option<usize>)>), // We may know the size or name of each axis. Implies rank
 }
 
-#[derive(Clone, Copy)]
-pub struct Sp<T> {
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub struct Sp<'src> {
     /// In bytes
     pub start: usize,
-    /// In bytes also
+    /// In bytes also (non-inclusive)
     pub end: usize,
-    /// The actual thing
-    pub value: T,
+
+    _phantom: PhantomData<&'src ()>,
 }
 
-impl<T> Sp<T> {
-    pub fn merge(&self, rhs: &Sp<T>, value: T) -> Sp<T> {
-        Sp {
-            start: self.start.min(rhs.start),
-            end: self.start.max(rhs.start),
-            value,
+impl<'a> Sp<'a> {
+    pub fn new(start: usize, end: usize) -> Self {
+        Self {
+            start,
+            end,
+            _phantom: PhantomData,
         }
+    }
+    pub fn merge(&self, rhs: &Sp) -> Sp {
+        Self::new(self.start.min(rhs.start), self.start.max(rhs.start))
     }
 }
 
@@ -46,15 +50,15 @@ pub enum Word {
 }
 
 /// What appears in the code, pretty much at any location
-pub enum Item {
+pub enum Item<'src> {
     TypeDef {
         left: Option<TypeAnnotation>,
         right: Option<TypeAnnotation>,
         out: Option<TypeAnnotation>,
     },
     Binding {
-        name: Sp<Ident>,
-        code: Vec<Sp<Word>>,
+        name: Ident,
+        code: Vec<(Word, Sp<'src>)>,
     },
-    Words(Vec<Sp<Word>>),
+    Words(Vec<(Word, Sp<'src>)>),
 }

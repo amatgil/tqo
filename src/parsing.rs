@@ -3,8 +3,13 @@
 
 use crate::{ast::Sp, *};
 
-#[derive(Clone)]
-pub enum Token {
+#[derive(Clone, PartialEq, Eq)]
+pub struct Token<'src> {
+    kind: TokenKind<'src>,
+    span: Sp<'src>,
+}
+#[derive(Clone, PartialEq, Eq)]
+pub enum TokenKind<'src> {
     Number,
     String,
     Char,
@@ -21,30 +26,30 @@ pub enum Token {
     ArrayAssign,
     VerbAssign,
     AdverbAssign,
-    Parenthesized(Vec<Sp<Token>>),
+    Parenthesized(Vec<Token<'src>>),
 }
 
-impl Token {
-    fn to_tree(t: Sp<Token>) -> Tree {
+impl<'src> Token<'src> {
+    fn to_tree(t: Token) -> Tree {
         let leaf = |cat| Box::new(ExprParseTree::Leaf { cat, t: t.clone() });
 
-        match t.value {
-            Token::Number => leaf(Category::A),
-            Token::String => leaf(Category::A),
-            Token::Char => leaf(Category::A),
-            Token::PrimArray => leaf(Category::A),
-            Token::PrimAVerb => leaf(Category::AMf),
-            Token::PrimOVerb => leaf(Category::OMf),
-            Token::PrimAAdverb => leaf(Category::AMm),
-            Token::PrimOAdverb => leaf(Category::OMm),
-            Token::ArrayName => leaf(Category::N),
-            Token::AVerbName => leaf(Category::AMf),
-            Token::OVerbName => leaf(Category::AMf),
-            Token::OAdverbName => leaf(Category::OMm),
-            Token::ArrayAssign => leaf(Category::Ass),
-            Token::VerbAssign => leaf(Category::Ass),
-            Token::AdverbAssign => leaf(Category::Ass),
-            Token::Parenthesized(tokens) => todo!(),
+        match t.kind {
+            TokenKind::Number => leaf(Category::A),
+            TokenKind::String => leaf(Category::A),
+            TokenKind::Char => leaf(Category::A),
+            TokenKind::PrimArray => leaf(Category::A),
+            TokenKind::PrimAVerb => leaf(Category::AMf),
+            TokenKind::PrimOVerb => leaf(Category::OMf),
+            TokenKind::PrimAAdverb => leaf(Category::AMm),
+            TokenKind::PrimOAdverb => leaf(Category::OMm),
+            TokenKind::ArrayName => leaf(Category::N),
+            TokenKind::AVerbName => leaf(Category::AMf),
+            TokenKind::OVerbName => leaf(Category::AMf),
+            TokenKind::OAdverbName => leaf(Category::OMm),
+            TokenKind::ArrayAssign => leaf(Category::Ass),
+            TokenKind::VerbAssign => leaf(Category::Ass),
+            TokenKind::AdverbAssign => leaf(Category::Ass),
+            TokenKind::Parenthesized(tokens) => todo!(),
         }
     }
 }
@@ -77,7 +82,7 @@ enum Category {
 
 impl Category {
     #[rustfmt::skip]
-    fn binding_power_of(a: &Self, b: &Self) -> Option<(u8, ExprParseTree)> {
+    fn binding_power_of<'a>(a: &Self, b: &Self) -> Option<(u8, ExprParseTree<'a>)> {
         use Category as C;
         match (a, b) {
             (C::A, C::A) => todo!(), (C::A, C::AMf) => todo!(), (C::A, C::OMf) => todo!(), (C::A, C::Df) => todo!(), (C::A, C::N) => todo!(), (C::A, C::AMm) => todo!(), (C::A, C::OMm) => todo!(), (C::A, C::Dm) => todo!(), (C::A, C::Jot) => todo!(), (C::A, C::Arr) => todo!(), (C::A, C::Ass) => todo!(),
@@ -95,20 +100,20 @@ impl Category {
     }
 }
 
-type Tree = Box<ExprParseTree>;
+type Tree<'src> = Box<ExprParseTree<'src>>;
 /// Used to parse expressions, not top-level elements
 /// TODO: Add Sp<Token> to each branch to be able to track the origin?
 /// Or, i think span should just be Sp, not Sp<T> <--- definitely this
-enum ExprParseTree {
-    Leaf { cat: Category, t: Sp<Token> },
-    AlphaMonadFnCall { alpha: Tree, fun: Tree },
-    OmegaMonadFnCall { omega: Tree, fun: Tree },
-    Assignment { name: String, val: Tree },
-    AlphaModifierCall { alpha: Tree, fun: Tree },
-    OmegaModifierCall { omega: Tree, fun: Tree },
+enum ExprParseTree<'src> {
+    Leaf { cat: Category, t: Token<'src> },
+    AlphaMonadFnCall { alpha: Tree<'src>, fun: Tree<'src> },
+    OmegaMonadFnCall { omega: Tree<'src>, fun: Tree<'src> },
+    Assignment { name: String, val: Tree<'src> },
+    AlphaModifierCall { alpha: Tree<'src>, fun: Tree<'src> },
+    OmegaModifierCall { omega: Tree<'src>, fun: Tree<'src> },
 }
 
-impl ExprParseTree {
+impl<'src> ExprParseTree<'src> {
     fn category(&self) -> Category {
         match self {
             ExprParseTree::Leaf { cat, t } => *cat,
@@ -119,7 +124,7 @@ impl ExprParseTree {
             ExprParseTree::OmegaModifierCall { .. } => Category::OMm,
         }
     }
-    fn minimum_span(&self) -> Sp<Token> {
+    fn minimum_span(&self) -> Token {
         match self {
             ExprParseTree::Leaf { cat, t } => t.clone(),
             ExprParseTree::AlphaMonadFnCall { alpha, fun } => todo!(),
@@ -139,6 +144,14 @@ impl ExprParseTree {
         }
         pairs
     }
+}
+
+#[test]
+fn babys_first_parsing() {
+    let input = vec![Token {
+        kind: TokenKind::Number,
+        span: Sp { start: 0, end: 1 },
+    }];
 }
 
 #[test]
