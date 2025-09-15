@@ -26,10 +26,12 @@ enum Side {
 #[rustfmt::skip] #[derive(Clone, Debug, PartialEq, Eq)] struct TI8(Infallible);
 #[rustfmt::skip] #[derive(Clone, Debug, PartialEq, Eq)] struct TI16(Infallible);
 #[rustfmt::skip] #[derive(Clone, Debug, PartialEq, Eq)] struct TChar(Infallible);
-#[rustfmt::skip] #[derive(Clone, Debug, PartialEq, Eq)] struct TFnMonadic(Infallible);
-#[rustfmt::skip] #[derive(Clone, Debug, PartialEq, Eq)] struct TFnDyadic(Infallible);
-#[rustfmt::skip] #[derive(Clone, Debug, PartialEq, Eq)] struct TModMonadic(Infallible);
-#[rustfmt::skip] #[derive(Clone, Debug, PartialEq, Eq)] struct TModDyadic(Infallible);
+#[rustfmt::skip] #[derive(Clone, Debug, PartialEq, Eq)] struct TAVerb(Infallible);
+#[rustfmt::skip] #[derive(Clone, Debug, PartialEq, Eq)] struct TOVerb(Infallible);
+#[rustfmt::skip] #[derive(Clone, Debug, PartialEq, Eq)] struct TDVerb(Infallible);
+#[rustfmt::skip] #[derive(Clone, Debug, PartialEq, Eq)] struct TAAdverb(Infallible);
+#[rustfmt::skip] #[derive(Clone, Debug, PartialEq, Eq)] struct TOAdverb(Infallible);
+#[rustfmt::skip] #[derive(Clone, Debug, PartialEq, Eq)] struct TDAdverb(Infallible);
 #[rustfmt::skip] #[derive(Clone, Debug, PartialEq, Eq)] struct TSumType(Infallible);
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -41,15 +43,24 @@ enum TAtom {
     Nat(TNat),
     /// Arbitrary precision integer
     Int(TInt),
+    /// Unsigned eight-bit number
     U8(TU8),
+    /// Unsigned sixteen-bit number
     U16(TU16),
+    /// Signed eight-bit number
     I8(TI8),
+    /// Signed sixteen-bit number
     I16(TU16),
+    /// Unicode character
     Char(TChar),
-    FnMonadic(TFnMonadic),
-    FnDyadic(TFnDyadic),
-    ModMonadic(TModMonadic),
-    ModDyadic(TModDyadic),
+    /// alpha-monadic verb
+    AVerb(TAVerb),
+    /// omega-monadic verb
+    OVerb(TOVerb),
+    /// alpha-monadic adverb
+    AAdverb(TAVerb),
+    /// omega-monadic adverb
+    OAdverb(TOVerb),
     SumType(TSumType),
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -63,10 +74,12 @@ enum TAtomKind {
     I8,
     I16,
     Char,
-    FnMonadic,
-    FnDyadic,
-    ModMonadic,
-    ModDyadic,
+    AVerb,
+    OVerb,
+    DVerb,
+    AAdverb,
+    OAdverb,
+    DDyadic,
     SumType,
 }
 
@@ -81,18 +94,6 @@ enum TNoun {
     Atom(TAtom),
     Array(TArray),
 }
-
-//#[derive(Clone, Debug, PartialEq, Eq)]
-//enum TVerb {
-//    FnMonadic(TFnMonadic),
-//    FnDyadic(TFnDyadic),
-//}
-//
-//#[derive(Clone, Debug, PartialEq, Eq)]
-//enum TAdverb {
-//    ModMonadic(TModMonadic),
-//    ModDyadic(TModDyadic),
-//}
 
 #[derive(Clone, Debug)]
 struct TEnv(HashMap<Ident, TNoun>);
@@ -120,16 +121,6 @@ enum Primitive {
     Maximum,
     Minimum,
 }
-
-//enum TShapeDescription {
-//    Rank(usize),                                // We know the number of axis
-//    Axes(Vec<(Option<String>, Option<usize>)>), // We may know the size or name of each axis. Implies rank
-//}
-
-//struct TType {
-//    scalar_type: TScalarType, // The type
-//    shape: TShapeDescription, // And the shape
-//}
 
 #[test]
 fn bunda_gerth_binding_powers() {

@@ -14,13 +14,13 @@ enum Token {
     PrimAMod,
     PrimOMod,
     ArrayName,
-    AFnName,
-    OFnName,
-    // AModName,  <-- CANNOT EXIST! There's no way to construct a primitive of this kind
-    OModName,
+    AVerbName,
+    OVerbName,
+    // AAdverbName,  <-- CANNOT EXIST! There's no way to construct a primitive of this kind
+    OAdverbName,
     ArrayAssign,
-    FnAssign,
-    ModAssign,
+    VerbAssign,
+    AdverbAssign,
     Parenthesized(Vec<Sp<Token>>),
 }
 
@@ -38,12 +38,12 @@ impl Token {
             Token::PrimAMod => leaf(Category::AMm),
             Token::PrimOMod => leaf(Category::OMm),
             Token::ArrayName => leaf(Category::N),
-            Token::AFnName => leaf(Category::AMf),
-            Token::OFnName => leaf(Category::AMf),
-            Token::OModName => leaf(Category::OMm),
+            Token::AVerbName => leaf(Category::AMf),
+            Token::OVerbName => leaf(Category::AMf),
+            Token::OAdverbName => leaf(Category::OMm),
             Token::ArrayAssign => leaf(Category::Ass),
-            Token::FnAssign => leaf(Category::Ass),
-            Token::ModAssign => leaf(Category::Ass),
+            Token::VerbAssign => leaf(Category::Ass),
+            Token::AdverbAssign => leaf(Category::Ass),
             Token::Parenthesized(tokens) => todo!(),
         }
     }
