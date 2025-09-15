@@ -4,15 +4,15 @@
 use crate::{ast::Sp, *};
 
 #[derive(Clone)]
-enum Token {
+pub enum Token {
     Number,
     String,
     Char,
     PrimArray,
-    PrimAFn,
-    PrimOFn,
-    PrimAMod,
-    PrimOMod,
+    PrimAVerb,
+    PrimOVerb,
+    PrimAAdverb,
+    PrimOAdverb,
     ArrayName,
     AVerbName,
     OVerbName,
@@ -33,10 +33,10 @@ impl Token {
             Token::String => leaf(Category::A),
             Token::Char => leaf(Category::A),
             Token::PrimArray => leaf(Category::A),
-            Token::PrimAFn => leaf(Category::AMf),
-            Token::PrimOFn => leaf(Category::OMf),
-            Token::PrimAMod => leaf(Category::AMm),
-            Token::PrimOMod => leaf(Category::OMm),
+            Token::PrimAVerb => leaf(Category::AMf),
+            Token::PrimOVerb => leaf(Category::OMf),
+            Token::PrimAAdverb => leaf(Category::AMm),
+            Token::PrimOAdverb => leaf(Category::OMm),
             Token::ArrayName => leaf(Category::N),
             Token::AVerbName => leaf(Category::AMf),
             Token::OVerbName => leaf(Category::AMf),
@@ -138,5 +138,40 @@ impl ExprParseTree {
             }
         }
         pairs
+    }
+}
+
+#[test]
+fn bunda_gerth_binding_powers() {
+    // See README.md/Bunda-Gerth for the actual table
+    let tbd = None; // for now!
+    #[rustfmt::skip]
+    let table: [[Option<u8>; 10]; 10] = [
+              /* A     αMF   ⍵MF   DF    N     αMM  ⍵MM   DM    JOT   ARR */
+        /*A*/   [None, tbd,  None, tbd,  None, tbd, tbd,  tbd,  tbd,  tbd],
+        /*αMF*/ [None, tbd,  None, tbd,  None, tbd, tbd,  tbd,  tbd,  tbd],
+        /*⍵MF*/ [tbd,  None, tbd,  None, tbd,  tbd, None, None, None, tbd],
+        /*DF*/  [tbd,  None, tbd,  None, tbd,  tbd, None, None, None, tbd],
+        /*N*/   [None, tbd,  None, tbd,  None, tbd, tbd,  tbd,  tbd,  tbd],
+        /*αMM*/ [None, tbd,  tbd,  tbd,  tbd,  tbd, tbd,  tbd,  tbd,  tbd],
+        /*⍵MM*/ [tbd,  tbd,  tbd,  tbd,  tbd,  tbd, tbd,  tbd,  tbd,  tbd],
+        /*DM*/  [tbd,  tbd,  tbd,  tbd,  tbd,  tbd, tbd,  tbd,  tbd,  tbd],
+        /*JOT*/ [tbd,  tbd,  tbd,  tbd,  tbd,  tbd, tbd,  tbd,  tbd,  tbd],
+        /*ARR*/ [tbd,  tbd,  tbd,  tbd,  tbd,  tbd, tbd,  tbd,  tbd,  tbd],
+    ];
+
+    use Category::*;
+
+    let gt_conditions = [
+        ((AMf, Dm), (Dm, Df)),
+        ((Df, Dm), (Dm, Df)),
+        ((Df, Jot), (Dm, Df)),
+    ];
+
+    for (lesser, greater) in gt_conditions {
+        let lesser_prio = table[lesser.0 as u8 as usize][lesser.1 as u8 as usize];
+        let greater_prio = table[greater.0 as u8 as usize][greater.1 as u8 as usize];
+
+        assert!(lesser_prio.is_none() || greater_prio.unwrap() > lesser_prio.unwrap())
     }
 }
