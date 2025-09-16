@@ -233,10 +233,7 @@ pub fn parse_expr_go<'src>(
 ) -> TResult<'src, ExprTree<'src>> {
     use TParseErrKind as K;
     let lhs = match ts.get(cur) {
-        Some(t) => {
-            cur += 1;
-            t
-        }
+        Some(t) => t,
         None => {
             return Err(TParseErr::with_span(
                 ts.last().map(|t| t.span).unwrap_or(Sp::ZERO),
@@ -247,7 +244,20 @@ pub fn parse_expr_go<'src>(
     .to_tree();
 
     loop {
-        parse_expr_go(ts, cur, min_bp)?;
+        let op = match ts.get(cur + 1) {
+            Token::Eof => break,
+            Token::Op(op) => op,
+            t => panic!("bad token: {:?}", t),
+        };
+
+        let (l_bp, r_bp) = todo!("consult bundagerth table");
+        if l_bp < min_bp {
+            break;
+        }
+
+        let rhs = parse_expr_go(ts, cur + 2, r_bp);
+
+        lhs = todo!("We have lhs, op and rhs");
     }
     Ok(*lhs)
 }
