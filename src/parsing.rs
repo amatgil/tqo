@@ -26,10 +26,15 @@ pub enum ExprTokenKind<'src> {
 }
 
 impl<'src> ExprToken<'src> {
-    fn to_tree(t: ExprToken) -> Tree {
-        let leaf = |cat| Box::new(ExprTree::Leaf { cat, t: t.clone() });
+    fn to_tree(&self) -> Tree {
+        let leaf = |cat| {
+            Box::new(ExprTree::Leaf {
+                cat,
+                t: self.clone(),
+            })
+        };
 
-        match t.kind {
+        match &self.kind {
             ExprTokenKind::Number => leaf(Category::A),
             ExprTokenKind::String => leaf(Category::A),
             ExprTokenKind::Char => leaf(Category::A),
@@ -195,9 +200,12 @@ pub struct TParseErr<'src> {
     kind: TParseErrKind,
 }
 
-impl TParseErr {
-    fn at(t: ExprToken, kind: TParseErrKind) -> Self {
+impl<'src> TParseErr<'src> {
+    fn at(t: ExprToken<'src>, kind: TParseErrKind) -> Self {
         Self { kind, span: t.span }
+    }
+    fn with_span(span: Sp<'src>, kind: TParseErrKind) -> Self {
+        Self { kind, span }
     }
 }
 #[derive(Debug, Clone)]
@@ -208,21 +216,28 @@ pub enum TParseErrKind {
 /// `ts` must be non-empty
 pub fn parse_expr<'src>(
     ts: &'src [ExprToken],
-    cur: usize,
+    mut cur: usize,
     min_bp: u8,
 ) -> TResult<'src, ExprTree<'src>> {
     use TParseErrKind as K;
     let mut lhs = match ts.get(cur) {
-        Some(t) => t,
+        Some(t) => {
+            cur += 1;
+            t
+        }
         None => {
-            return Err(TParseErr::at(
+            return Err(TParseErr::with_span(
                 ts.last().map(|t| t.span).unwrap_or(Sp::ZERO),
                 K::UnexpectedEndOfExpression,
-            ));
+            ))?;
         }
-    };
-    loop {}
-    Ok(lhs)
+    }
+    .to_tree();
+
+    loop {
+        todo!()
+    }
+    Ok(*lhs)
 }
 
 #[test]

@@ -36,14 +36,14 @@ pub struct OutputTypeSpecifier {
 // Does not allow '=', allows stuff like reverse, join, etc.
 pub struct TypeLevelExpr {}
 
-#[derive(, Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 struct TError<'src> {
     span: Sp<'src>,
     kind: TErrorKind,
 }
 
-impl<'src> From<TParseError<'src>> for TError<'src> {
-    fn from(value: TParseError<'src>) -> Self {
+impl<'src> From<TParseErr<'src>> for TError<'src> {
+    fn from(value: TParseErr<'src>) -> Self {
         todo!()
     }
 }
