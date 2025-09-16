@@ -23,7 +23,7 @@ pub struct Sp<'src> {
     pub start: usize,
     /// In bytes also (non-inclusive)
     pub end: usize,
-
+    /// Lifetime holder
     _phantom: PhantomData<&'src ()>,
 }
 
@@ -35,7 +35,7 @@ impl<'a> Sp<'a> {
             _phantom: PhantomData,
         }
     }
-    pub fn merge(&self, rhs: &Sp) -> Sp {
+    pub fn merge<'src>(&'src self, rhs: &'src Sp) -> Sp<'src> {
         Self::new(self.start.min(rhs.start), self.start.max(rhs.start))
     }
 }

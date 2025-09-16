@@ -1,10 +1,40 @@
 use std::{collections::HashMap, convert::Infallible, default};
 
 use ast::Sp;
+use parsing::*;
 mod ast;
 mod function;
 mod parsing;
 mod primitive;
+
+pub enum Item<'src> {
+    Expr(ExprTree<'src>),
+    TypeDef(Typedef),
+}
+
+/// Specifies rank, length, etc
+pub struct Typedef {
+    alpha: Option<InputTypeSpecifier>,
+    omega: Option<InputTypeSpecifier>,
+    output: Option<OutputTypeSpecifier>,
+    ident: Ident,
+}
+
+pub struct InputTypeSpecifier {
+    rank: Option<TypeLevelExpr>,
+    length: Option<TypeLevelExpr>,
+    shape: Option<TypeLevelExpr>,
+}
+/// Each of {rank, length, shape} can be computed as a TypeLevelExpr that
+/// may only take as unknowns the typelevel specifications from the input(s)
+pub struct OutputTypeSpecifier {
+    rank: Option<Box<dyn Fn(Option<u32>, Option<u32>) -> u32>>,
+    length: Option<Box<dyn Fn(Option<u32>, Option<u32>) -> u32>>,
+    shape: Option<Box<dyn Fn(Option<Shape>, Option<Shape>) -> u32>>,
+}
+
+// Does not allow '=', allows stuff like reverse, join, etc.
+pub struct TypeLevelExpr {}
 
 #[derive(Debug, Clone, Copy)]
 struct TError<'src> {
@@ -94,9 +124,10 @@ enum TAtomKind {
     SumType,
 }
 
+type Shape = Vec<u32>; // TODO: Turn this into a tinyvec
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct TArray {
-    shape: Vec<u64>, // TODO: Turn this into a tinyvec
+    shape: Shape,
     data: Vec<TNoun>,
 }
 

@@ -8,6 +8,7 @@ pub struct ExprToken<'src> {
     kind: ExprTokenKind<'src>,
     span: Sp<'src>,
 }
+
 #[rustfmt::skip]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ExprTokenKind<'src> {
@@ -26,7 +27,7 @@ pub enum ExprTokenKind<'src> {
 
 impl<'src> ExprToken<'src> {
     fn to_tree(t: ExprToken) -> Tree {
-        let leaf = |cat| Box::new(ExprParseTree::Leaf { cat, t: t.clone() });
+        let leaf = |cat| Box::new(ExprTree::Leaf { cat, t: t.clone() });
 
         match t.kind {
             ExprTokenKind::Number => leaf(Category::A),
@@ -81,7 +82,7 @@ enum Category {
 
 impl Category {
     #[rustfmt::skip]
-    fn binding_power_of<'a>(a: &Self, b: &Self) -> Option<(u8, ExprParseTree<'a>)> {
+    fn binding_power_of<'a>(a: &Self, b: &Self) -> Option<(u8, ExprTree<'a>)> {
         use Category as C;
         match (a, b) {
             (C::A, C::A) => todo!(), (C::A, C::Av) => todo!(), (C::A, C::Ov) => todo!(), (C::A, C::Dv) => todo!(), (C::A, C::N) => todo!(), (C::A, C::Aa) => todo!(), (C::A, C::Oa) => todo!(), (C::A, C::Da) => todo!(), (C::A, C::Jot) => todo!(), (C::A, C::Arr) => todo!(), (C::A, C::Ass) => todo!(),
@@ -98,7 +99,7 @@ impl Category {
         }
     }
     #[rustfmt::skip]
-    fn binding_power_of_inside_train<'a>(a: &Self, b: &Self) -> Option<(u8, ExprParseTree<'a>)> {
+    fn binding_power_of_inside_train<'a>(a: &Self, b: &Self) -> Option<(u8, ExprTree<'a>)> {
         use Category as C;
         match (a, b) {
             (C::A, C::A) => todo!(), (C::A, C::Av) => todo!(), (C::A, C::Ov) => todo!(), (C::A, C::Dv) => todo!(), (C::A, C::N) => todo!(), (C::A, C::Aa) => todo!(), (C::A, C::Oa) => todo!(), (C::A, C::Da) => todo!(), (C::A, C::Jot) => todo!(), (C::A, C::Arr) => todo!(), (C::A, C::Ass) => todo!(),
@@ -116,12 +117,11 @@ impl Category {
     }
 }
 
-type Tree<'src> = Box<ExprParseTree<'src>>;
+type Tree<'src> = Box<ExprTree<'src>>;
+
 /// Used to parse expressions, not top-level elements
-/// TODO: Add Sp<Token> to each branch to be able to track the origin?
-/// Or, i think span should just be Sp, not Sp<T> <--- definitely this
 #[derive(Debug, Clone, PartialEq, Eq)]
-enum ExprParseTree<'src> {
+pub enum ExprTree<'src> {
     Leaf {
         cat: Category,
         t: ExprToken<'src>,
@@ -158,36 +158,36 @@ enum ExprParseTree<'src> {
     },
 }
 
-impl<'src> ExprParseTree<'src> {
+impl<'src> ExprTree<'src> {
     fn category(&self) -> Category {
         match self {
-            ExprParseTree::Leaf { cat, t } => *cat,
-            ExprParseTree::AlphaVerbCall { .. } => Category::Av,
-            ExprParseTree::OmegaVerbCall { .. } => Category::Ov,
-            ExprParseTree::Assignment { .. } => Category::Ass,
-            ExprParseTree::AlphaAdverbCall { .. } => Category::Aa,
-            ExprParseTree::OmegaAdverbCall { .. } => Category::Oa,
-            ExprParseTree::DyadicVerbCall { .. } => Category::Dv,
-            ExprParseTree::DyadicAdverbCall { .. } => Category::Da,
+            ExprTree::Leaf { cat, t } => *cat,
+            ExprTree::AlphaVerbCall { .. } => Category::Av,
+            ExprTree::OmegaVerbCall { .. } => Category::Ov,
+            ExprTree::Assignment { .. } => Category::Ass,
+            ExprTree::AlphaAdverbCall { .. } => Category::Aa,
+            ExprTree::OmegaAdverbCall { .. } => Category::Oa,
+            ExprTree::DyadicVerbCall { .. } => Category::Dv,
+            ExprTree::DyadicAdverbCall { .. } => Category::Da,
         }
     }
     fn minimum_span(&self) -> ExprToken {
         match self {
-            ExprParseTree::Leaf { cat, t } => t.clone(),
-            ExprParseTree::AlphaVerbCall { verb, alpha } => todo!(),
-            ExprParseTree::OmegaVerbCall { verb, omega } => todo!(),
-            ExprParseTree::Assignment { name, val } => todo!(),
-            ExprParseTree::AlphaAdverbCall { adverb, alpha } => todo!(),
-            ExprParseTree::OmegaAdverbCall { adverb, omega } => todo!(),
-            ExprParseTree::DyadicVerbCall { verb, alpha, omega } => todo!(),
-            ExprParseTree::DyadicAdverbCall {
+            ExprTree::Leaf { cat, t } => t.clone(),
+            ExprTree::AlphaVerbCall { verb, alpha } => todo!(),
+            ExprTree::OmegaVerbCall { verb, omega } => todo!(),
+            ExprTree::Assignment { name, val } => todo!(),
+            ExprTree::AlphaAdverbCall { adverb, alpha } => todo!(),
+            ExprTree::OmegaAdverbCall { adverb, omega } => todo!(),
+            ExprTree::DyadicVerbCall { verb, alpha, omega } => todo!(),
+            ExprTree::DyadicAdverbCall {
                 adverb,
                 alpha,
                 omega,
             } => todo!(),
         }
     }
-    fn pairs(trees: &[Self]) -> Vec<(u8, ExprParseTree)> {
+    fn pairs(trees: &[Self]) -> Vec<(u8, ExprTree)> {
         let mut pairs = vec![];
         for pair in trees.windows(2) {
             let [left, right] = pair else { unreachable!() };
@@ -199,7 +199,7 @@ impl<'src> ExprParseTree<'src> {
     }
 }
 
-pub fn parse_expr<'src>(ts: &'src [ExprToken]) -> TResult<'src, ExprParseTree<'src>> {
+pub fn parse_expr<'src>(ts: &'src [ExprToken]) -> TResult<'src, ExprTree<'src>> {
     if ts.is_empty() {
         return Err(TError::new(TErrorKind::EmptyExpr, Sp::new(0, 0)));
     }
@@ -225,22 +225,22 @@ fn babys_first_parsing() {
     ];
 
     let expr = parse_expr(&ts).unwrap();
-    let expected = ExprParseTree::DyadicVerbCall {
-        verb: Box::new(ExprParseTree::Leaf {
+    let expected = ExprTree::DyadicVerbCall {
+        verb: Box::new(ExprTree::Leaf {
             cat: Category::Dv,
             t: ExprToken {
                 kind: ExprTokenKind::PrimDVerb,
                 span: Sp::new(0, 1),
             },
         }),
-        alpha: Box::new(ExprParseTree::Leaf {
+        alpha: Box::new(ExprTree::Leaf {
             cat: Category::A,
             t: ExprToken {
                 kind: ExprTokenKind::Number,
                 span: Sp::new(0, 1),
             },
         }),
-        omega: Box::new(ExprParseTree::Leaf {
+        omega: Box::new(ExprTree::Leaf {
             cat: Category::A,
             t: ExprToken {
                 kind: ExprTokenKind::Number,
