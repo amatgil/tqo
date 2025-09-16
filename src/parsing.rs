@@ -215,12 +215,24 @@ pub enum TParseErrKind {
 
 /// `ts` must be non-empty
 pub fn parse_expr<'src>(
+    start_span: Sp<'src>,
+    ts: &'src [ExprToken],
+) -> TResult<'src, ExprTree<'src>> {
+    if ts.is_empty() {
+        return Err(TError {
+            span: start_span,
+            kind: TErrorKind::EmptyExpr,
+        });
+    }
+    parse_expr_go(ts, 0, 0)
+}
+pub fn parse_expr_go<'src>(
     ts: &'src [ExprToken],
     mut cur: usize,
     min_bp: u8,
 ) -> TResult<'src, ExprTree<'src>> {
     use TParseErrKind as K;
-    let mut lhs = match ts.get(cur) {
+    let lhs = match ts.get(cur) {
         Some(t) => {
             cur += 1;
             t
@@ -235,7 +247,7 @@ pub fn parse_expr<'src>(
     .to_tree();
 
     loop {
-        todo!()
+        parse_expr_go(ts, cur, min_bp)?;
     }
     Ok(*lhs)
 }
@@ -258,7 +270,7 @@ fn babys_first_parsing() {
         },
     ];
 
-    let expr = parse_expr(&ts).unwrap();
+    let expr = parse_expr(Sp::ZERO, &ts).unwrap();
     let expected = ExprTree::DyadicVerbCall {
         verb: Box::new(ExprTree::Leaf {
             cat: Category::Dv,
