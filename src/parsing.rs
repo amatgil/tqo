@@ -187,23 +187,42 @@ impl<'src> ExprTree<'src> {
             } => todo!(),
         }
     }
-    fn pairs(trees: &[Self]) -> Vec<(u8, ExprTree)> {
-        let mut pairs = vec![];
-        for pair in trees.windows(2) {
-            let [left, right] = pair else { unreachable!() };
-            if let Some(p) = Category::binding_power_of(&left.category(), &right.category()) {
-                pairs.push(p);
-            }
-        }
-        pairs
-    }
 }
 
-pub fn parse_expr<'src>(ts: &'src [ExprToken]) -> TResult<'src, ExprTree<'src>> {
-    if ts.is_empty() {
-        return Err(TError::new(TErrorKind::EmptyExpr, Sp::new(0, 0)));
+#[derive(Debug, Clone)]
+pub struct TParseErr<'src> {
+    span: Sp<'src>,
+    kind: TParseErrKind,
+}
+
+impl TParseErr {
+    fn at(t: ExprToken, kind: TParseErrKind) -> Self {
+        Self { kind, span: t.span }
     }
-    todo!()
+}
+#[derive(Debug, Clone)]
+pub enum TParseErrKind {
+    UnexpectedEndOfExpression,
+}
+
+/// `ts` must be non-empty
+pub fn parse_expr<'src>(
+    ts: &'src [ExprToken],
+    cur: usize,
+    min_bp: u8,
+) -> TResult<'src, ExprTree<'src>> {
+    use TParseErrKind as K;
+    let mut lhs = match ts.get(cur) {
+        Some(t) => t,
+        None => {
+            return Err(TParseErr::at(
+                ts.last().map(|t| t.span).unwrap_or(Sp::ZERO),
+                K::UnexpectedEndOfExpression,
+            ));
+        }
+    };
+    loop {}
+    Ok(lhs)
 }
 
 #[test]

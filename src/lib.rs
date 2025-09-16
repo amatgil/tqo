@@ -1,4 +1,4 @@
-use std::{collections::HashMap, convert::Infallible, default};
+use std::{collections::HashMap, convert::Infallible, default, error, fmt::Display};
 
 use ast::Sp;
 use parsing::*;
@@ -36,10 +36,22 @@ pub struct OutputTypeSpecifier {
 // Does not allow '=', allows stuff like reverse, join, etc.
 pub struct TypeLevelExpr {}
 
-#[derive(Debug, Clone, Copy)]
+#[derive(, Debug, Clone, Copy)]
 struct TError<'src> {
     span: Sp<'src>,
     kind: TErrorKind,
+}
+
+impl<'src> From<TParseError<'src>> for TError<'src> {
+    fn from(value: TParseError<'src>) -> Self {
+        todo!()
+    }
+}
+
+impl<'src> Display for TError<'src> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        todo!()
+    }
 }
 
 impl<'src> TError<'src> {
