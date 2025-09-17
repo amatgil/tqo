@@ -72,10 +72,11 @@ pub(crate) fn binding_power_of<'src>(
     a: &ExprTree<'src>,
     b: &ExprTree<'src>,
 ) -> Option<(u8, ExprTree<'src>)> {
+    use Category::*;
     let (a, b) = (a.clone(), b.clone());
     let (ac, bc) = (a.category(), b.category());
     assert!((ac as u8) < 11 && (bc as u8) < 11);
-    let s = |bp, t| Some((bp, t));
+    let s = |bp, c| Some((bp, c));
     let tbd = None; // for now!
 
     fn merge_with_cat<'src>(
@@ -111,21 +112,24 @@ pub(crate) fn binding_power_of<'src>(
 
     #[rustfmt::skip]
     let table: [[Option<_>; 11]; 11] = [
-              /* A         αV    ⍵V    DV         N     αA   ⍵A    DA    JOT   ARR  ASS*/
-        /*A*/   [None,         tbd.clone(),  None,         s(2, ExprTree::OmegaVerbCall { verb: Box::new(a), omega: Box::new(b) }),  None, tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
-        /*αV*/  [None,         tbd.clone(),  None,         tbd.clone(),       None, tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
-        /*⍵V*/  [tbd.clone(),  None,         tbd.clone(),  None,              tbd.clone(),  tbd.clone(), None, None, None, tbd.clone(), tbd.clone()],
-        /*DV*/  [tbd.clone(),  None,         tbd.clone(),  None,              tbd.clone(),  tbd.clone(), None, None, None, tbd.clone(), tbd.clone()],
-        /*N*/   [None,         tbd.clone(),  None,         tbd.clone(),       None, tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
-        /*αA*/  [None,         tbd.clone(),  tbd.clone(),  tbd.clone(),       tbd.clone(),  tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
-        /*⍵A*/  [tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(),       tbd.clone(),  tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
-        /*DA*/  [tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(),       tbd.clone(),  tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
-        /*JOT*/ [tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(),       tbd.clone(),  tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
-        /*ARR*/ [tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(),       tbd.clone(),  tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
-        /*ASS*/ [tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(),       tbd.clone(),  tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
+              /* A             αV            ⍵V            DV           N             αA            ⍵A           DA            JOT          ARR            ASS*/
+        /*A*/   [None,         tbd.clone(),  None,         s(2, Ov),    None, tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
+        /*αV*/  [None,         tbd.clone(),  None,         tbd.clone(), None, tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
+        /*⍵V*/  [tbd.clone(),  None,         tbd.clone(),  None,        tbd.clone(),  tbd.clone(), None, None, None, tbd.clone(), tbd.clone()],
+        /*DV*/  [tbd.clone(),  None,         tbd.clone(),  None,        tbd.clone(),  tbd.clone(), None, None, None, tbd.clone(), tbd.clone()],
+        /*N*/   [None,         tbd.clone(),  None,         tbd.clone(), None, tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
+        /*αA*/  [None,         tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone(),  tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
+        /*⍵A*/  [tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone(),  tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
+        /*DA*/  [tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone(),  tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
+        /*JOT*/ [tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone(),  tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
+        /*ARR*/ [tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone(),  tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
+        /*ASS*/ [tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone(),  tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
     ];
 
-    table[ac as u8 as usize][bc as u8 as usize].clone()
+    match table[ac as u8 as usize][bc as u8 as usize] {
+        Some((bp, c)) => Some((bp, merge_with_cat(c, a, b))),
+        None => None,
+    }
 }
 
 fn parse_expr_go<'src>(
@@ -162,7 +166,7 @@ fn parse_expr_go<'src>(
                 None => (0, None),
             }
         };
-        let (r_bp, r_ret) = match ts.get(marker + 1) {
+        let (r_bp, r_ret) = match dbg!(ts.get(marker + 1)) {
             Some(r_tok) => match binding_power_of(current, r_tok) {
                 None => (0, None),
                 Some((bp, r_ret)) => (bp, Some(r_ret)),
@@ -173,7 +177,7 @@ fn parse_expr_go<'src>(
         dbg!(l_bp, r_bp);
 
         // Translated talqual from the bundagerth paper
-        if l_bp > r_bp {
+        if l_bp < r_bp {
             marker += 1;
         } else if l_bp == r_bp {
             if l_bp == 0 {
@@ -181,11 +185,11 @@ fn parse_expr_go<'src>(
             } else {
                 marker += 1;
             }
-        } else if l_bp < r_bp {
+        } else if l_bp > r_bp {
             // reduce current with left and repeat
             let r_ret = r_ret.unwrap().clone();
             ts.remove(marker);
-            //ts.remove(marker - 1);
+            ts.remove(marker - 1);
             ts.insert(marker, r_ret);
         }
     }
