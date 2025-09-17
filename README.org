@@ -276,6 +276,7 @@ Note that all non-commutative dyadic operations have non-symemtrical glyphs! (Wi
 | ∤      | Logic      | Nodivides        |          |         |                                            |
 | ⊣      |            | Left             | Function | Dyadic  |                                            |
 | ⊢      |            | Right            | Function | Dyadic  |                                            |
+| TBD    |            | Catenate         | Function | Dyadic  | The comma is reserved for TODO             |
 | ⍋      |            | Grade up         | Function | Monadic |                                            |
 | ⍒      |            | Grade down       | Function | Monadic |                                            |
 | ⍉      |            | Transpose        | Function | Monadic |                                            |
@@ -337,6 +338,7 @@ f g Y
 - Think hard about how to do generics/typeclasses
 - Document the fact that all values are immutable. For mutability, use repeat and such
 - Memory mapped files
+- Ponder indexing semantics ('=A IDX=' in Bunda-Gerth parsing). Brackets are taken for array construction....
 
 
 

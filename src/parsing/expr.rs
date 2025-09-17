@@ -157,20 +157,30 @@ pub(crate) fn parse_expr_go<'src>(
         }
     }
     .to_tree();
+    cur += 1;
 
     loop {
-        let op: Tree = match ts.get(cur + 1) {
+        let op: Tree = match ts.get(cur) {
             Some(t) => t.to_tree(),
             None => break,
         };
+        cur += 1;
 
-        let bp = match binding_power_of(lhs.category(), op.category()) {
+        let (l_bp, l_ret) = match binding_power_of(lhs.category(), op.category()) {
             Some(bp) => bp,
             None => todo!(),
         };
         if l_bp < min_bp {
             break;
         }
+
+        let rhs = parse_expr_go(ts, cur, min_bp)?;
+        cur += 1;
+
+        let (r_bp, r_ret) = match binding_power_of(rhs.category(), op.category()) {
+            Some(bp) => bp,
+            None => todo!(),
+        };
 
         //let rhs = parse_expr_go(ts, cur + 2, r_bp);
 
