@@ -1,9 +1,8 @@
 
-: '(⍤=1, Nat) » bfs
+: '(⍤=2, B) » bfs « Nat
               ↳ '(⍤=1, Nat)
-bfs ← {
-  s ← ⍺≢↯∞ ⊡⍜0 0 ⍝ all distances are inf, start at 0
+bfs ← { ⍝ alpha is list of adj, omega is start
+  s ← ⍺≢↯∞ ⊡⍜⍵ 0 ⍝ all distances are inf, start at ⍵
 
-  s ≡⍣{β=∞⍸ ⊏⍜{γ 0_¯1⍤⊏β 1⍤/↧}}
+  s ≡⍣{β=∞⍸ ⊏⍜{γ⊏⍺ 0_1⍤⊏β 1⍤/↧}}
 }
-
