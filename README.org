@@ -306,7 +306,7 @@ Note that all non-commutative dyadic operations have non-symemtrical glyphs! (Wi
 ** Special syntax glyphs
 | Glyph | Name              | Meaning                                                  |
 |-------+-------------------+----------------------------------------------------------|
-| :     | Type definition   | Declare the type of an atom                              |
+| :     | Type definition   | Declare the type of a binding                            |
 | ⊔     | Destructure       | Start pattern matching                                   |
 | ⊔     | Destructure       | Start pattern matching                                   |
 | ⋄     | Diamond           | Statment separator                                       |
