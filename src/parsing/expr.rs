@@ -68,78 +68,127 @@ const _CHECK_CATEGORY_DISCRIMINANTS: () = {
         )
     }
 };
+pub(crate) fn binding_power_of<'src>(
+    a: &ExprTree<'src>,
+    b: &ExprTree<'src>,
+) -> Option<(u8, ExprTree<'src>)> {
+    let (a, b) = (a.clone(), b.clone());
+    let (ac, bc) = (a.category(), b.category());
+    assert!((ac as u8) < 11 && (bc as u8) < 11);
+    let s = |bp, t| Some((bp, t));
+    let tbd = None; // for now!
 
-pub(crate) fn binding_power_of<'a>(a: Category, b: Category) -> Option<(u8, ExprTree<'a>)> {
-    use Category::*;
-    assert!((a as u8) < 11 && (b as u8) < 11);
-    const TBD: Option<(u8, ExprTree)> = None; // for now!
+    fn merge_with_cat<'src>(
+        cat: Category,
+        left: ExprTree<'src>,
+        right: ExprTree<'src>,
+    ) -> ExprTree<'src> {
+        match cat {
+            Category::A | Category::N => unreachable!(),
+            Category::Av => ExprTree::AlphaVerbCall {
+                alpha: Box::new(left),
+                verb: Box::new(right),
+            },
+            Category::Ov => ExprTree::OmegaVerbCall {
+                verb: Box::new(left),
+                omega: Box::new(right),
+            },
+            Category::Dv => unreachable!("i am honestly not really sure"),
+            Category::Aa => ExprTree::AlphaAdverbCall {
+                alpha: Box::new(left),
+                adverb: Box::new(right),
+            },
+            Category::Oa => ExprTree::OmegaAdverbCall {
+                adverb: Box::new(left),
+                omega: Box::new(right),
+            },
+            Category::Da => todo!(),
+            Category::Jot => unreachable!(),
+            Category::Arr => unreachable!(),
+            Category::Ass => todo!(),
+        }
+    }
 
     #[rustfmt::skip]
-    let table: [[Option<(u8, ExprTree)>; 11]; 11] = [
-              /* A     αV    ⍵V    DV    N     αA   ⍵A    DA    JOT   ARR  ASS*/
-        /*A*/   [None, TBD,  None, TBD,  None, TBD, TBD,  TBD,  TBD,  TBD, TBD],
-        /*αV*/  [None, TBD,  None, TBD,  None, TBD, TBD,  TBD,  TBD,  TBD, TBD],
-        /*⍵V*/  [TBD,  None, TBD,  None, TBD,  TBD, None, None, None, TBD, TBD],
-        /*DV*/  [TBD,  None, TBD,  None, TBD,  TBD, None, None, None, TBD, TBD],
-        /*N*/   [None, TBD,  None, TBD,  None, TBD, TBD,  TBD,  TBD,  TBD, TBD],
-        /*αA*/  [None, TBD,  TBD,  TBD,  TBD,  TBD, TBD,  TBD,  TBD,  TBD, TBD],
-        /*⍵A*/  [TBD,  TBD,  TBD,  TBD,  TBD,  TBD, TBD,  TBD,  TBD,  TBD, TBD],
-        /*DA*/  [TBD,  TBD,  TBD,  TBD,  TBD,  TBD, TBD,  TBD,  TBD,  TBD, TBD],
-        /*JOT*/ [TBD,  TBD,  TBD,  TBD,  TBD,  TBD, TBD,  TBD,  TBD,  TBD, TBD],
-        /*ARR*/ [TBD,  TBD,  TBD,  TBD,  TBD,  TBD, TBD,  TBD,  TBD,  TBD, TBD],
-        /*ASS*/ [TBD,  TBD,  TBD,  TBD,  TBD,  TBD, TBD,  TBD,  TBD,  TBD, TBD],
+    let table: [[Option<_>; 11]; 11] = [
+              /* A         αV    ⍵V    DV         N     αA   ⍵A    DA    JOT   ARR  ASS*/
+        /*A*/   [None,         tbd.clone(),  None,         s(2, ExprTree::OmegaVerbCall { verb: Box::new(a), omega: Box::new(b) }),  None, tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
+        /*αV*/  [None,         tbd.clone(),  None,         tbd.clone(),       None, tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
+        /*⍵V*/  [tbd.clone(),  None,         tbd.clone(),  None,              tbd.clone(),  tbd.clone(), None, None, None, tbd.clone(), tbd.clone()],
+        /*DV*/  [tbd.clone(),  None,         tbd.clone(),  None,              tbd.clone(),  tbd.clone(), None, None, None, tbd.clone(), tbd.clone()],
+        /*N*/   [None,         tbd.clone(),  None,         tbd.clone(),       None, tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
+        /*αA*/  [None,         tbd.clone(),  tbd.clone(),  tbd.clone(),       tbd.clone(),  tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
+        /*⍵A*/  [tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(),       tbd.clone(),  tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
+        /*DA*/  [tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(),       tbd.clone(),  tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
+        /*JOT*/ [tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(),       tbd.clone(),  tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
+        /*ARR*/ [tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(),       tbd.clone(),  tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
+        /*ASS*/ [tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(),       tbd.clone(),  tbd.clone(), tbd.clone(),  tbd.clone(),  tbd.clone(),  tbd.clone(), tbd.clone()],
     ];
 
-    table[a as u8 as usize][b as u8 as usize].clone()
+    table[ac as u8 as usize][bc as u8 as usize].clone()
 }
 
 fn parse_expr_go<'src>(
-    ts: &'src [ExprToken],
-    mut cur: usize,
-    min_bp: u8,
+    mut ts: Vec<ExprTree<'src>>,
+    start: Sp<'src>,
 ) -> TResult<'src, ExprTree<'src>> {
-    use ExprTokenKind as TK;
     use TParseErrKind as EK;
-    let lhs: Tree = match ts.get(cur) {
-        Some(t) => t,
-        None => {
-            return Err(TParseErr::with_span(
-                ts.last().map(|t| t.span).unwrap_or(Sp::ZERO),
-                EK::UnexpectedEndOfExpression,
-            ))?;
-        }
-    }
-    .to_tree();
-    cur += 1;
 
+    // NOTE: `cur` always points to the (would-be) op
+    let mut marker = 0;
     loop {
-        let op: Tree = match ts.get(cur) {
-            Some(t) => t.to_tree(),
-            None => break,
-        };
-        cur += 1;
-
-        let (l_bp, l_ret) = match binding_power_of(lhs.category(), op.category()) {
-            Some(bp) => bp,
-            None => todo!(),
-        };
-        if l_bp < min_bp {
-            break;
+        dbg!(marker);
+        if ts.len() == 1 {
+            return Ok(ts[0].clone());
         }
-
-        let rhs = parse_expr_go(ts, cur, min_bp)?;
-        cur += 1;
-
-        let (r_bp, r_ret) = match binding_power_of(rhs.category(), op.category()) {
-            Some(bp) => bp,
-            None => todo!(),
+        let current = match ts.get(marker) {
+            Some(t) => t,
+            None => {
+                return Err(TParseErr::with_span(
+                    ts.last().cloned().map(|t| t.span()).unwrap_or(start),
+                    EK::UnexpectedEndOfExpression,
+                ))?;
+            }
         };
 
-        //let rhs = parse_expr_go(ts, cur + 2, r_bp);
+        let (l_bp, l_ret) = if marker == 0 {
+            (0, None)
+        } else {
+            match ts.get(marker - 1) {
+                Some(l_ret) => match binding_power_of(l_ret, current) {
+                    None => (0, None),
+                    Some((bp, l_ret)) => (bp, Some(l_ret)),
+                },
+                None => (0, None),
+            }
+        };
+        let (r_bp, r_ret) = match ts.get(marker + 1) {
+            Some(r_tok) => match binding_power_of(current, r_tok) {
+                None => (0, None),
+                Some((bp, r_ret)) => (bp, Some(r_ret)),
+            },
+            None => (0, None),
+        };
 
-        lhs = todo!("We have lhs, op and rhs");
+        dbg!(l_bp, r_bp);
+
+        // Translated talqual from the bundagerth paper
+        if l_bp > r_bp {
+            marker += 1;
+        } else if l_bp == r_bp {
+            if l_bp == 0 {
+                todo!("SYNTAX ERROR")
+            } else {
+                marker += 1;
+            }
+        } else if l_bp < r_bp {
+            // reduce current with left and repeat
+            let r_ret = r_ret.unwrap().clone();
+            ts.remove(marker);
+            //ts.remove(marker - 1);
+            ts.insert(marker, r_ret);
+        }
     }
-    Ok(*lhs)
 }
 
 type Tree<'src> = Box<ExprTree<'src>>;
@@ -152,8 +201,8 @@ pub(crate) enum ExprTree<'src> {
         t: ExprToken<'src>,
     },
     AlphaVerbCall {
-        verb: Tree<'src>,
         alpha: Tree<'src>,
+        verb: Tree<'src>,
     },
     OmegaVerbCall {
         verb: Tree<'src>,
@@ -185,8 +234,8 @@ pub(crate) enum ExprTree<'src> {
 
 /// `ts` must be non-empty
 pub(crate) fn parse_expr<'src>(
-    start_span: Sp<'src>,
     ts: &'src [ExprToken],
+    start_span: Sp<'src>,
 ) -> TResult<'src, ExprTree<'src>> {
     if ts.is_empty() {
         return Err(TError {
@@ -194,16 +243,14 @@ pub(crate) fn parse_expr<'src>(
             kind: TErrorKind::EmptyExpr,
         });
     }
-    parse_expr_go(ts, 0, 0)
+    parse_expr_go(ts.iter().map(|t| t.to_tree()).collect(), start_span)
 }
 
 impl<'src> ExprToken<'src> {
-    fn to_tree(&self) -> Tree {
-        let leaf = |cat| {
-            Box::new(ExprTree::Leaf {
-                cat,
-                t: self.clone(),
-            })
+    fn to_tree(&self) -> ExprTree {
+        let leaf = |cat| ExprTree::Leaf {
+            cat,
+            t: self.clone(),
         };
 
         match &self.kind {
@@ -244,9 +291,9 @@ impl<'src> ExprTree<'src> {
             ExprTree::DyadicAdverbCall { .. } => Category::Da,
         }
     }
-    fn minimum_span(&self) -> ExprToken {
+    fn span(&self) -> Sp<'src> {
         match self {
-            ExprTree::Leaf { cat, t } => t.clone(),
+            ExprTree::Leaf { cat, t } => t.span,
             ExprTree::AlphaVerbCall { verb, alpha } => todo!(),
             ExprTree::OmegaVerbCall { verb, omega } => todo!(),
             ExprTree::Assignment { name, val } => todo!(),
