@@ -48,35 +48,12 @@ struct TError<'src> {
     kind: TErrorKind,
 }
 
-impl<'src> From<TParseErr<'src>> for TError<'src> {
-    fn from(value: TParseErr<'src>) -> Self {
-        todo!()
-    }
-}
-
-impl<'src> Display for TError<'src> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        todo!()
-    }
-}
-
-impl<'src> TError<'src> {
-    pub fn new(kind: TErrorKind, span: Sp<'src>) -> Self {
-        Self { span, kind }
-    }
-}
-
 #[derive(Debug, Clone, Copy)]
 enum TErrorKind {
     EmptyExpr,
 }
 
 type TResult<'src, T> = Result<T, TError<'src>>;
-
-enum Side {
-    Left,
-    Right,
-}
 
 #[rustfmt::skip] #[derive(Clone, Debug, PartialEq, Eq)] struct TNat(Infallible);
 #[rustfmt::skip] #[derive(Clone, Debug, PartialEq, Eq)] struct TInt(Infallible);
@@ -158,13 +135,6 @@ enum TNoun {
 #[derive(Clone, Debug)]
 struct TEnv(HashMap<Ident, TNoun>);
 
-impl Default for TEnv {
-    fn default() -> Self {
-        let hs = HashMap::from([(1, 2)]);
-        todo!()
-    }
-}
-
 enum Primitive {
     Negate,
     Not,
@@ -180,4 +150,29 @@ enum Primitive {
     Modulo,
     Maximum,
     Minimum,
+}
+
+impl Default for TEnv {
+    fn default() -> Self {
+        let hs = HashMap::from([(1, 2)]);
+        todo!()
+    }
+}
+
+impl<'src> From<TParseErr<'src>> for TError<'src> {
+    fn from(value: TParseErr<'src>) -> Self {
+        todo!()
+    }
+}
+
+impl<'src> Display for TError<'src> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        todo!()
+    }
+}
+
+impl<'src> TError<'src> {
+    pub fn new(kind: TErrorKind, span: Sp<'src>) -> Self {
+        Self { span, kind }
+    }
 }
