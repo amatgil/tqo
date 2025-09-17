@@ -25,46 +25,27 @@ enum Category {
     Da,
     /// ...should this be here?
     Jot,
-    /// Arrow
+    /// Arrow (in-line assignment exists)
     Arr,
     /// Assignment
     Ass,
 }
 
-impl Category {
-    #[rustfmt::skip]
-    fn binding_power_of<'a>(a: &Self, b: &Self) -> Option<(u8, ExprTree<'a>)> {
-        use Category as C;
-        match (a, b) {
-            (C::A, C::A) => todo!(), (C::A, C::Av) => todo!(), (C::A, C::Ov) => todo!(), (C::A, C::Dv) => todo!(), (C::A, C::N) => todo!(), (C::A, C::Aa) => todo!(), (C::A, C::Oa) => todo!(), (C::A, C::Da) => todo!(), (C::A, C::Jot) => todo!(), (C::A, C::Arr) => todo!(), (C::A, C::Ass) => todo!(),
-            (C::Av, C::A) => todo!(), (C::Av, C::Av) => todo!(), (C::Av, C::Ov) => todo!(), (C::Av, C::Dv) => todo!(), (C::Av, C::N) => todo!(), (C::Av, C::Aa) => todo!(), (C::Av, C::Oa) => todo!(), (C::Av, C::Da) => todo!(), (C::Av, C::Jot) => todo!(), (C::Av, C::Arr) => todo!(), (C::Av, C::Ass) => todo!(),
-            (C::Ov, C::A) => todo!(), (C::Ov, C::Av) => todo!(), (C::Ov, C::Ov) => todo!(), (C::Ov, C::Dv) => todo!(), (C::Ov, C::N) => todo!(), (C::Ov, C::Aa) => todo!(), (C::Ov, C::Oa) => todo!(), (C::Ov, C::Da) => todo!(), (C::Ov, C::Jot) => todo!(), (C::Ov, C::Arr) => todo!(), (C::Ov, C::Ass) => todo!(),
-            (C::Dv, C::A) => todo!(), (C::Dv, C::Av) => todo!(), (C::Dv, C::Ov) => todo!(), (C::Dv, C::Dv) => todo!(), (C::Dv, C::N) => todo!(), (C::Dv, C::Aa) => todo!(), (C::Dv, C::Oa) => todo!(), (C::Dv, C::Da) => todo!(), (C::Dv, C::Jot) => todo!(), (C::Dv, C::Arr) => todo!(), (C::Dv, C::Ass) => todo!(),
-            (C::N, C::A) => todo!(), (C::N, C::Av) => todo!(), (C::N, C::Ov) => todo!(), (C::N, C::Dv) => todo!(), (C::N, C::N) => todo!(), (C::N, C::Aa) => todo!(), (C::N, C::Oa) => todo!(), (C::N, C::Da) => todo!(), (C::N, C::Jot) => todo!(), (C::N, C::Arr) => todo!(), (C::N, C::Ass) => todo!(),
-            (C::Aa, C::A) => todo!(), (C::Aa, C::Av) => todo!(), (C::Aa, C::Ov) => todo!(), (C::Aa, C::Dv) => todo!(), (C::Aa, C::N) => todo!(), (C::Aa, C::Aa) => todo!(), (C::Aa, C::Oa) => todo!(), (C::Aa, C::Da) => todo!(), (C::Aa, C::Jot) => todo!(), (C::Aa, C::Arr) => todo!(), (C::Aa, C::Ass) => todo!(),
-            (C::Oa, C::A) => todo!(), (C::Oa, C::Av) => todo!(), (C::Oa, C::Ov) => todo!(), (C::Oa, C::Dv) => todo!(), (C::Oa, C::N) => todo!(), (C::Oa, C::Aa) => todo!(), (C::Oa, C::Oa) => todo!(), (C::Oa, C::Da) => todo!(), (C::Oa, C::Jot) => todo!(), (C::Oa, C::Arr) => todo!(), (C::Oa, C::Ass) => todo!(),
-            (C::Da, C::A) => todo!(), (C::Da, C::Av) => todo!(), (C::Da, C::Ov) => todo!(), (C::Da, C::Dv) => todo!(), (C::Da, C::N) => todo!(), (C::Da, C::Aa) => todo!(), (C::Da, C::Oa) => todo!(), (C::Da, C::Da) => todo!(), (C::Da, C::Jot) => todo!(), (C::Da, C::Arr) => todo!(), (C::Da, C::Ass) => todo!(),
-            (C::Jot, C::A) => todo!(), (C::Jot, C::Av) => todo!(), (C::Jot, C::Ov) => todo!(), (C::Jot, C::Dv) => todo!(), (C::Jot, C::N) => todo!(), (C::Jot, C::Aa) => todo!(), (C::Jot, C::Oa) => todo!(), (C::Jot, C::Da) => todo!(), (C::Jot, C::Jot) => todo!(), (C::Jot, C::Arr) => todo!(), (C::Jot, C::Ass) => todo!(),
-            (C::Arr, C::A) => todo!(), (C::Arr, C::Av) => todo!(), (C::Arr, C::Ov) => todo!(), (C::Arr, C::Dv) => todo!(), (C::Arr, C::N) => todo!(), (C::Arr, C::Aa) => todo!(), (C::Arr, C::Oa) => todo!(), (C::Arr, C::Da) => todo!(), (C::Arr, C::Jot) => todo!(), (C::Arr, C::Arr) => todo!(), (C::Arr, C::Ass) => todo!(),
-            (C::Ass, C::A) => todo!(), (C::Ass, C::Av) => todo!(), (C::Ass, C::Ov) => todo!(), (C::Ass, C::Dv) => todo!(), (C::Ass, C::N) => todo!(), (C::Ass, C::Aa) => todo!(), (C::Ass, C::Oa) => todo!(), (C::Ass, C::Da) => todo!(), (C::Ass, C::Jot) => todo!(), (C::Ass, C::Arr) => todo!(), (C::Ass, C::Ass) => todo!(),
-        }
-    }
-    #[rustfmt::skip]
-    fn binding_power_of_inside_train<'a>(a: &Self, b: &Self) -> Option<(u8, ExprTree<'a>)> {
-        use Category as C;
-        match (a, b) {
-            (C::A, C::A) => todo!(), (C::A, C::Av) => todo!(), (C::A, C::Ov) => todo!(), (C::A, C::Dv) => todo!(), (C::A, C::N) => todo!(), (C::A, C::Aa) => todo!(), (C::A, C::Oa) => todo!(), (C::A, C::Da) => todo!(), (C::A, C::Jot) => todo!(), (C::A, C::Arr) => todo!(), (C::A, C::Ass) => todo!(),
-            (C::Av, C::A) => todo!(), (C::Av, C::Av) => todo!(), (C::Av, C::Ov) => todo!(), (C::Av, C::Dv) => todo!(), (C::Av, C::N) => todo!(), (C::Av, C::Aa) => todo!(), (C::Av, C::Oa) => todo!(), (C::Av, C::Da) => todo!(), (C::Av, C::Jot) => todo!(), (C::Av, C::Arr) => todo!(), (C::Av, C::Ass) => todo!(),
-            (C::Ov, C::A) => todo!(), (C::Ov, C::Av) => todo!(), (C::Ov, C::Ov) => todo!(), (C::Ov, C::Dv) => todo!(), (C::Ov, C::N) => todo!(), (C::Ov, C::Aa) => todo!(), (C::Ov, C::Oa) => todo!(), (C::Ov, C::Da) => todo!(), (C::Ov, C::Jot) => todo!(), (C::Ov, C::Arr) => todo!(), (C::Ov, C::Ass) => todo!(),
-            (C::Dv, C::A) => todo!(), (C::Dv, C::Av) => todo!(), (C::Dv, C::Ov) => todo!(), (C::Dv, C::Dv) => todo!(), (C::Dv, C::N) => todo!(), (C::Dv, C::Aa) => todo!(), (C::Dv, C::Oa) => todo!(), (C::Dv, C::Da) => todo!(), (C::Dv, C::Jot) => todo!(), (C::Dv, C::Arr) => todo!(), (C::Dv, C::Ass) => todo!(),
-            (C::N, C::A) => todo!(), (C::N, C::Av) => todo!(), (C::N, C::Ov) => todo!(), (C::N, C::Dv) => todo!(), (C::N, C::N) => todo!(), (C::N, C::Aa) => todo!(), (C::N, C::Oa) => todo!(), (C::N, C::Da) => todo!(), (C::N, C::Jot) => todo!(), (C::N, C::Arr) => todo!(), (C::N, C::Ass) => todo!(),
-            (C::Aa, C::A) => todo!(), (C::Aa, C::Av) => todo!(), (C::Aa, C::Ov) => todo!(), (C::Aa, C::Dv) => todo!(), (C::Aa, C::N) => todo!(), (C::Aa, C::Aa) => todo!(), (C::Aa, C::Oa) => todo!(), (C::Aa, C::Da) => todo!(), (C::Aa, C::Jot) => todo!(), (C::Aa, C::Arr) => todo!(), (C::Aa, C::Ass) => todo!(),
-            (C::Oa, C::A) => todo!(), (C::Oa, C::Av) => todo!(), (C::Oa, C::Ov) => todo!(), (C::Oa, C::Dv) => todo!(), (C::Oa, C::N) => todo!(), (C::Oa, C::Aa) => todo!(), (C::Oa, C::Oa) => todo!(), (C::Oa, C::Da) => todo!(), (C::Oa, C::Jot) => todo!(), (C::Oa, C::Arr) => todo!(), (C::Oa, C::Ass) => todo!(),
-            (C::Da, C::A) => todo!(), (C::Da, C::Av) => todo!(), (C::Da, C::Ov) => todo!(), (C::Da, C::Dv) => todo!(), (C::Da, C::N) => todo!(), (C::Da, C::Aa) => todo!(), (C::Da, C::Oa) => todo!(), (C::Da, C::Da) => todo!(), (C::Da, C::Jot) => todo!(), (C::Da, C::Arr) => todo!(), (C::Da, C::Ass) => todo!(),
-            (C::Jot, C::A) => todo!(), (C::Jot, C::Av) => todo!(), (C::Jot, C::Ov) => todo!(), (C::Jot, C::Dv) => todo!(), (C::Jot, C::N) => todo!(), (C::Jot, C::Aa) => todo!(), (C::Jot, C::Oa) => todo!(), (C::Jot, C::Da) => todo!(), (C::Jot, C::Jot) => todo!(), (C::Jot, C::Arr) => todo!(), (C::Jot, C::Ass) => todo!(),
-            (C::Arr, C::A) => todo!(), (C::Arr, C::Av) => todo!(), (C::Arr, C::Ov) => todo!(), (C::Arr, C::Dv) => todo!(), (C::Arr, C::N) => todo!(), (C::Arr, C::Aa) => todo!(), (C::Arr, C::Oa) => todo!(), (C::Arr, C::Da) => todo!(), (C::Arr, C::Jot) => todo!(), (C::Arr, C::Arr) => todo!(), (C::Arr, C::Ass) => todo!(),
-            (C::Ass, C::A) => todo!(), (C::Ass, C::Av) => todo!(), (C::Ass, C::Ov) => todo!(), (C::Ass, C::Dv) => todo!(), (C::Ass, C::N) => todo!(), (C::Ass, C::Aa) => todo!(), (C::Ass, C::Oa) => todo!(), (C::Ass, C::Da) => todo!(), (C::Ass, C::Jot) => todo!(), (C::Ass, C::Arr) => todo!(), (C::Ass, C::Ass) => todo!(),
-        }
+#[rustfmt::skip]
+fn binding_power_of<'a>(a: Category, b: Category) -> Option<(u8, ExprTree<'a>)> {
+    use Category as C;
+    match (a, b) {
+        (C::A, C::A) => todo!(), (C::A, C::Av) => todo!(), (C::A, C::Ov) => todo!(), (C::A, C::Dv) => todo!(), (C::A, C::N) => todo!(), (C::A, C::Aa) => todo!(), (C::A, C::Oa) => todo!(), (C::A, C::Da) => todo!(), (C::A, C::Jot) => todo!(), (C::A, C::Arr) => todo!(), (C::A, C::Ass) => todo!(),
+        (C::Av, C::A) => todo!(), (C::Av, C::Av) => todo!(), (C::Av, C::Ov) => todo!(), (C::Av, C::Dv) => todo!(), (C::Av, C::N) => todo!(), (C::Av, C::Aa) => todo!(), (C::Av, C::Oa) => todo!(), (C::Av, C::Da) => todo!(), (C::Av, C::Jot) => todo!(), (C::Av, C::Arr) => todo!(), (C::Av, C::Ass) => todo!(),
+        (C::Ov, C::A) => todo!(), (C::Ov, C::Av) => todo!(), (C::Ov, C::Ov) => todo!(), (C::Ov, C::Dv) => todo!(), (C::Ov, C::N) => todo!(), (C::Ov, C::Aa) => todo!(), (C::Ov, C::Oa) => todo!(), (C::Ov, C::Da) => todo!(), (C::Ov, C::Jot) => todo!(), (C::Ov, C::Arr) => todo!(), (C::Ov, C::Ass) => todo!(),
+        (C::Dv, C::A) => todo!(), (C::Dv, C::Av) => todo!(), (C::Dv, C::Ov) => todo!(), (C::Dv, C::Dv) => todo!(), (C::Dv, C::N) => todo!(), (C::Dv, C::Aa) => todo!(), (C::Dv, C::Oa) => todo!(), (C::Dv, C::Da) => todo!(), (C::Dv, C::Jot) => todo!(), (C::Dv, C::Arr) => todo!(), (C::Dv, C::Ass) => todo!(),
+        (C::N, C::A) => todo!(), (C::N, C::Av) => todo!(), (C::N, C::Ov) => todo!(), (C::N, C::Dv) => todo!(), (C::N, C::N) => todo!(), (C::N, C::Aa) => todo!(), (C::N, C::Oa) => todo!(), (C::N, C::Da) => todo!(), (C::N, C::Jot) => todo!(), (C::N, C::Arr) => todo!(), (C::N, C::Ass) => todo!(),
+        (C::Aa, C::A) => todo!(), (C::Aa, C::Av) => todo!(), (C::Aa, C::Ov) => todo!(), (C::Aa, C::Dv) => todo!(), (C::Aa, C::N) => todo!(), (C::Aa, C::Aa) => todo!(), (C::Aa, C::Oa) => todo!(), (C::Aa, C::Da) => todo!(), (C::Aa, C::Jot) => todo!(), (C::Aa, C::Arr) => todo!(), (C::Aa, C::Ass) => todo!(),
+        (C::Oa, C::A) => todo!(), (C::Oa, C::Av) => todo!(), (C::Oa, C::Ov) => todo!(), (C::Oa, C::Dv) => todo!(), (C::Oa, C::N) => todo!(), (C::Oa, C::Aa) => todo!(), (C::Oa, C::Oa) => todo!(), (C::Oa, C::Da) => todo!(), (C::Oa, C::Jot) => todo!(), (C::Oa, C::Arr) => todo!(), (C::Oa, C::Ass) => todo!(),
+        (C::Da, C::A) => todo!(), (C::Da, C::Av) => todo!(), (C::Da, C::Ov) => todo!(), (C::Da, C::Dv) => todo!(), (C::Da, C::N) => todo!(), (C::Da, C::Aa) => todo!(), (C::Da, C::Oa) => todo!(), (C::Da, C::Da) => todo!(), (C::Da, C::Jot) => todo!(), (C::Da, C::Arr) => todo!(), (C::Da, C::Ass) => todo!(),
+        (C::Jot, C::A) => todo!(), (C::Jot, C::Av) => todo!(), (C::Jot, C::Ov) => todo!(), (C::Jot, C::Dv) => todo!(), (C::Jot, C::N) => todo!(), (C::Jot, C::Aa) => todo!(), (C::Jot, C::Oa) => todo!(), (C::Jot, C::Da) => todo!(), (C::Jot, C::Jot) => todo!(), (C::Jot, C::Arr) => todo!(), (C::Jot, C::Ass) => todo!(),
+        (C::Arr, C::A) => todo!(), (C::Arr, C::Av) => todo!(), (C::Arr, C::Ov) => todo!(), (C::Arr, C::Dv) => todo!(), (C::Arr, C::N) => todo!(), (C::Arr, C::Aa) => todo!(), (C::Arr, C::Oa) => todo!(), (C::Arr, C::Da) => todo!(), (C::Arr, C::Jot) => todo!(), (C::Arr, C::Arr) => todo!(), (C::Arr, C::Ass) => todo!(),
+        (C::Ass, C::A) => todo!(), (C::Ass, C::Av) => todo!(), (C::Ass, C::Ov) => todo!(), (C::Ass, C::Dv) => todo!(), (C::Ass, C::N) => todo!(), (C::Ass, C::Aa) => todo!(), (C::Ass, C::Oa) => todo!(), (C::Ass, C::Da) => todo!(), (C::Ass, C::Jot) => todo!(), (C::Ass, C::Arr) => todo!(), (C::Ass, C::Ass) => todo!(),
     }
 }
 
@@ -82,6 +63,7 @@ impl<'src> TParseErr<'src> {
         Self { kind, span }
     }
 }
+
 #[derive(Debug, Clone)]
 pub enum TParseErrKind {
     UnexpectedEndOfExpression,

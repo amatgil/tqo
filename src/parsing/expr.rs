@@ -145,31 +145,34 @@ pub(crate) fn parse_expr_go<'src>(
     mut cur: usize,
     min_bp: u8,
 ) -> TResult<'src, ExprTree<'src>> {
-    use TParseErrKind as K;
-    let lhs = match ts.get(cur) {
+    use ExprTokenKind as TK;
+    use TParseErrKind as EK;
+    let lhs: Tree = match ts.get(cur) {
         Some(t) => t,
         None => {
             return Err(TParseErr::with_span(
                 ts.last().map(|t| t.span).unwrap_or(Sp::ZERO),
-                K::UnexpectedEndOfExpression,
+                EK::UnexpectedEndOfExpression,
             ))?;
         }
     }
     .to_tree();
 
     loop {
-        let op = match ts.get(cur + 1) {
-            Token::Eof => break,
-            Token::Op(op) => op,
-            t => panic!("bad token: {:?}", t),
+        let op: Tree = match ts.get(cur + 1) {
+            Some(t) => t.to_tree(),
+            None => break,
         };
 
-        let (l_bp, r_bp) = todo!("consult bundagerth table");
+        let bp = match binding_power_of(lhs.category(), op.category()) {
+            Some(bp) => bp,
+            None => todo!(),
+        };
         if l_bp < min_bp {
             break;
         }
 
-        let rhs = parse_expr_go(ts, cur + 2, r_bp);
+        //let rhs = parse_expr_go(ts, cur + 2, r_bp);
 
         lhs = todo!("We have lhs, op and rhs");
     }

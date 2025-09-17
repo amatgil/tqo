@@ -6,6 +6,7 @@ mod ast;
 mod function;
 mod parsing;
 mod primitive;
+mod typecheck;
 
 pub enum Item<'src> {
     Expr(ExprTree<'src>),
@@ -14,10 +15,15 @@ pub enum Item<'src> {
 
 /// Specifies rank, length, etc
 pub struct Typedef {
+    ty: TType,
+    ident: Ident,
+}
+
+/// The type of any aray
+pub struct TType {
     alpha: Option<InputTypeSpecifier>,
     omega: Option<InputTypeSpecifier>,
     output: Option<OutputTypeSpecifier>,
-    ident: Ident,
 }
 
 pub struct InputTypeSpecifier {
@@ -30,7 +36,7 @@ pub struct InputTypeSpecifier {
 pub struct OutputTypeSpecifier {
     rank: Option<Box<dyn Fn(Option<u32>, Option<u32>) -> u32>>,
     length: Option<Box<dyn Fn(Option<u32>, Option<u32>) -> u32>>,
-    shape: Option<Box<dyn Fn(Option<Shape>, Option<Shape>) -> u32>>,
+    shape: Option<Box<dyn Fn(Option<Shape>, Option<Shape>) -> Shape>>,
 }
 
 // Does not allow '=', allows stuff like reverse, join, etc.
